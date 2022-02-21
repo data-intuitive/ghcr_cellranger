@@ -2,7 +2,7 @@ functionality:
   name: download_cellranger
   namespace: cellranger
   version: "dev"
-  description: "A helper script to download cellranger."
+  description: "A helper script to download Cell Ranger."
   authors:
     - name: Robrecht Cannoodt
       email: rcannood@gmail.com
