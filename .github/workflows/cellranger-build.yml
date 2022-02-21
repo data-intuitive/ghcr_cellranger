@@ -35,6 +35,11 @@ jobs:
         bin/init
         bin/viash -h
 
+    - name: Build dependending containers
+      run: |
+        bin/viash run src/cellranger/download_cellranger/config.vsh.yaml -- ---setup cb ---verbose
+        bin/viash run src/cellranger/encrypt_cellranger/config.vsh.yaml -- ---setup cb ---verbose
+
     - name: Download Cell Ranger
       run: |
         bin/viash run src/cellranger/download_cellranger/config.vsh.yaml -- \
