@@ -25,7 +25,7 @@ cp "$par_input" "$tempdir/cellranger.zip"
 docker build -t "$meta_functionality_name" "$tempdir"
 
 if [ ! -z "$par_tag" ]; then
-  IFS=":"
+  IFS=","
   for var in $par_tag; do
     unset IFS
     docker tag "$meta_functionality_name" "$var"

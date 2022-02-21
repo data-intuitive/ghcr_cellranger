@@ -18,6 +18,7 @@ functionality:
       description: Name of the resulting Docker image.
       default: ghcr.io/data-intuitive/cellranger:latest
       multiple: true
+      multiple_sep: ','
     - name: "--push"
       type: boolean_true
       description: Whether or not to try to push the image to the corresponding registry.
