@@ -11,11 +11,11 @@ functionality:
     - name: "--input_cellranger"
       alternatives: ["-i"]
       type: file
-      description: Encrypted zip file containing Cell Ranger.
-      default: "cellranger.zip"
+      description: Tar.gz file containing Cell Ranger.
+      default: "cellranger.tar.gz"
     - name: "--input_bcl2fastq"
       type: file
-      description: Encrypted zip file containing bcl2fastq.
+      description: Zip file containing bcl2fastq rpm.
       default: "bcl2fastq.zip"
     - name: "--tag"
       type: string
