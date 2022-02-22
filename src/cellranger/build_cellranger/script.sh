@@ -7,7 +7,7 @@ par_tag='ghcr.io/data-intuitive/cellranger:latest'
 meta_functionality_name='build_cellranger'
 ## VIASH END
 
-tempdir=$(mktemp -d "/home/rcannood/workspace/viash_temp/run-${meta_functionality_name}-XXXXXX")
+tempdir=$(mktemp -d "$VIASH_TEMP/run-${meta_functionality_name}-XXXXXX")
 if [[ ! "$tempdir" || ! -d "$tempdir" ]]; then
   echo "Could not create temp dir"
   exit 1
