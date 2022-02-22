@@ -18,7 +18,6 @@ function cleanup {
 }
 trap cleanup EXIT
 
-cp "$meta_resources_dir/mount.sh" "$tempdir/mount.sh"
 cp "$meta_resources_dir/Dockerfile" "$tempdir/Dockerfile"
 cp "$par_input_cellranger" "$tempdir/cellranger.tar.gz"
 

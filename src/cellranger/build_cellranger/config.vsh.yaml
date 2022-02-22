@@ -30,6 +30,5 @@ functionality:
     - type: bash_script
       path: script.sh
     - path: Dockerfile
-    - path: mount.sh
 platforms:
   - type: native
