@@ -27,9 +27,7 @@ with tempfile.TemporaryDirectory() as download_dir:
     options.set_preference("browser.download.manager.showWhenStarting", False)
     options.set_preference("browser.download.dir", download_dir)
     options.set_preference("browser.helperApps.alwaysAsk.force", False)
-    options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/zip")
-    options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-gzip")
-    options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-tar")
+    options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/zip,application/x-gzip,application/x-tar")
 
     driver = webdriver.Firefox(options=options)
 

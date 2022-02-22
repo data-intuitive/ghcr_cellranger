@@ -24,9 +24,9 @@ tar -xf "$par_input" -C "$tempdir" --strip 1
 echo Zipping contents
 cd "$tempdir/"
 zip \
-  -0 \
-  -q \
-  -r \
-  -P "$par_password" \
-  "$par_output" \
-  *
+  -0                    `# no encryption` \
+  -q                    `# quiet` \
+  -r                    `# recurse` \
+  -P "$par_password"    `# password` \
+  "$par_output"         `# output file` \
+  .                     `# input files`

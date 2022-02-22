@@ -1,18 +1,21 @@
-FROM ubuntu:21.10
+FROM centos:7
 
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential pkg-config wget unzip zip autoconf libarchive-dev libfuse-dev libcurl4-openssl-dev libxml2-dev mime-support automake libtool && \
-  rm -rf /var/lib/apt/lists/*
+LABEL org.opencontainers.image.source="https://github.com/data-intuitive/self_archiving"
 
-RUN wget https://github.com/cybernoid/archivemount/archive/refs/heads/master.zip && \
-  unzip master.zip && \
-  rm master.zip && \
-  cd archivemount-master/ && \
-  autoreconf -i && \
-  ./configure --prefix /usr && make && make install && \
-  cd / && rm -rf /archivemount-master/
+# install cellranger
+RUN yum -y upgrade && \
+  yum install -y wget unzip zip && \
+  yum clean all && \
+  rm -rf /var/cache/yum
 
 RUN mkdir -p /opt/cellranger
-ENV PATH="/opt/cellranger:${PATH}"
+ENV PATH="/opt/cellranger/bin:${PATH}"
 ADD cellranger.zip /opt
 ADD mount.sh /opt/mount.sh
+
+# install bcl2fastq
+ADD bcl2fastq.rpm /opt
+RUN yum install -y /opt/bcl2fastq.rpm && \
+  yum clean all && \
+  rm -rf /var/cache/yum
+

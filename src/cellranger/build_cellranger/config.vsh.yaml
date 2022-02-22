@@ -8,11 +8,15 @@ functionality:
       roles: [ author ]
       props: { github: rcannood, orcid: "0000-0003-3641-729X" }
   arguments:
-    - name: "--input"
+    - name: "--input_cellranger"
       alternatives: ["-i"]
       type: file
       description: Encrypted zip file containing Cell Ranger.
       default: "cellranger.zip"
+    - name: "--input_bcl2fastq"
+      type: file
+      description: Encrypted zip file containing bcl2fastq.
+      default: "bcl2fastq.zip"
     - name: "--tag"
       type: string
       description: Name of the resulting Docker image.

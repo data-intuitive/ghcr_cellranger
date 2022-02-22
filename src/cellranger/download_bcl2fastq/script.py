@@ -1,0 +1,84 @@
+import random
+import time
+import os
+import re
+import tempfile
+import shutil
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import sys
+
+## VIASH START
+par = {
+  'timeout': 600,
+  'output': 'bcl2fastq2.zip',
+  'account': 'foo',
+  'password': 'bar'
+}
+## VIASH END
+
+url = f"https://emea.support.illumina.com/downloads/bcl2fastq-conversion-software-v2-20.html"
+
+
+with tempfile.TemporaryDirectory() as download_dir:
+    print("Opening Firefox", flush=True)
+    options = webdriver.firefox.options.Options()
+    options.headless = True
+    options.set_preference("browser.download.folderList", 2)
+    options.set_preference("browser.download.manager.showWhenStarting", False)
+    options.set_preference("browser.download.dir", download_dir)
+    options.set_preference("browser.download.panel.shown", False)
+    options.set_preference("browser.helperApps.alwaysAsk.force", False)
+    options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/zip")
+
+    driver = webdriver.Firefox(options=options)
+
+    time.sleep(.5)
+
+    print("Navigating to page", flush=True)
+    driver.get(url)
+    time.sleep(3)
+
+    print("Clicking trust policy", flush=True)
+    elem = driver.find_element(By.ID, "onetrust-accept-btn-handler")
+    elem.click()
+    time.sleep(3)
+
+    print("Clicking url", flush=True)
+    elem = driver.find_element(By.PARTIAL_LINK_TEXT, "(Linux rpm)")
+    url = elem.get_property("href")
+    filename = re.sub("^.*assetDetails=([^?/]*.zip).*$", "\\1", url)
+    dest_path = os.path.join(download_dir, filename)
+    elem.click()
+    time.sleep(20)
+
+    print("Fill in login form", flush=True)
+    form = driver.find_element(By.NAME, 'signinForm')
+    time.sleep(.1)
+    form.find_element(By.ID, 'login').send_keys(par["email"])
+    time.sleep(.1)
+    form.find_element(By.NAME, 'password').send_keys(par["password"])
+    time.sleep(.1)
+
+    print("Downloading file", flush=True)
+    form.submit()
+    time.sleep(20)
+
+    print("Waiting until download is complete", flush=True)
+    i = 0
+    while i < par["timeout"] and os.path.exists(dest_path + ".part"):
+        time.sleep(1)
+        print("Content of download dir: " + ', '.join(os.listdir(download_dir)), flush=True)
+        i += 1
+
+    print("Quitting firefox", flush=True)
+    driver.quit()
+
+    if not os.path.exists(dest_path):
+        raise FileNotFoundError(f"Download has not completed after {par['timeout']}s. Is this script still working?")
+
+    print(f"Copying {dest_path} to {par['output']}", flush=True)
+    shutil.copy(dest_path, par["output"])
+
+    print("Download complete", flush=True)
+    sys.stdout.flush()
