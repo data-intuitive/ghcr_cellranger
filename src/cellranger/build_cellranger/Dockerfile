@@ -8,11 +8,11 @@ LABEL authors="Robrecht Cannoodt <robrecht@data-intuitive.com>" \
 
 RUN mkdir -p /opt/cellranger
 ENV PATH="/opt/cellranger/bin:${PATH}"
-ADD cellranger.tar.gz /opt
+COPY cellranger.tar.gz /opt
 RUN tar -xf "/opt/cellranger.tar.gz" -C "/opt/cellranger" --strip 1
 
 # install bcl2fastq
-ADD bcl2fastq.rpm /opt
+COPY bcl2fastq.rpm /opt
 RUN yum install -y /opt/bcl2fastq.rpm && \
   yum clean all && \
   rm -rf /var/cache/yum

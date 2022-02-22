@@ -9,7 +9,6 @@ functionality:
       props: { github: rcannood, orcid: "0000-0003-3641-729X" }
   arguments:
     - name: "--input_cellranger"
-      alternatives: ["-i"]
       type: file
       description: Tar.gz file containing Cell Ranger.
       default: "cellranger.tar.gz"
