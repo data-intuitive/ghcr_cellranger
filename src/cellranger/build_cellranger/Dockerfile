@@ -13,7 +13,9 @@ RUN tar -xf "/opt/cellranger.tar.gz" -C "/opt/cellranger" --strip 1
 
 # install bcl2fastq
 COPY bcl2fastq.rpm /opt
-RUN yum install -y /opt/bcl2fastq.rpm && \
+RUN yum install -y which python3 && \
+  yum install -y /opt/bcl2fastq.rpm && \
   yum clean all && \
   rm -rf /var/cache/yum
 
+RUN alternatives --install /usr/bin/python python /usr/bin/python3 1
