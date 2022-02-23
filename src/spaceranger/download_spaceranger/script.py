@@ -12,12 +12,12 @@ import sys
 par = {
   'tag': 'latest',
   'timeout': 600,
-  'output': 'cellranger.tar.gz',
+  'output': 'spaceranger.tar.gz',
   'multiplier': 1.0
 }
 ## VIASH END
 
-url = f"https://support.10xgenomics.com/single-cell-gene-expression/software/downloads/{par['tag']}"
+url = f"https://support.10xgenomics.com/spatial-gene-expression/software/downloads/{par['tag']}"
 
 def sleep(x):
     time.sleep(x * par['multiplier'])
@@ -66,8 +66,8 @@ with tempfile.TemporaryDirectory() as download_dir:
     form.submit()
     sleep(5)
 
-    # Download cellranger
-    print("Downloading Cell Ranger", flush=True)
+    # Download spaceranger
+    print("Downloading Space Ranger", flush=True)
     elem = driver.find_element(By.PARTIAL_LINK_TEXT, "Download - Linux")
     elem.click()
     url = elem.get_property("href")

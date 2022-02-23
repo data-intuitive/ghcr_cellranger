@@ -1,18 +1,24 @@
 functionality:
-  name: download_cellranger
-  namespace: cellranger
+  name: download_bcl2fastq
+  namespace: bcl2fastq
   version: "dev"
-  description: "A helper script to download Cell Ranger."
+  description: "A helper script to download bcl2fastq."
   authors:
     - name: Robrecht Cannoodt
       email: rcannood@gmail.com
       roles: [ author ]
       props: { github: rcannood, orcid: "0000-0003-3641-729X" }
   arguments:
-    - name: "--tag"
+    - name: "--email"
       type: string
-      description: Version of Cell Ranger to use.
-      default: latest
+      description: Illumina account
+      required: true
+      example: foo@bar.com
+    - name: "--password"
+      type: string
+      description: Password for Illumina account
+      required: true
+      example: mysecurepassword
     - name: "--timeout"
       type: integer
       description: Timeout in seconds.
@@ -26,7 +32,7 @@ functionality:
       type: file
       direction: output
       description: Output filename.
-      default: "cellranger_${VIASH_PAR_TAG}.tar.gz"
+      default: "bcl2fastq2.zip"
   resources:
     - type: python_script
       path: script.py

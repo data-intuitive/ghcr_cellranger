@@ -40,7 +40,7 @@ jobs:
 
     - name: Build dependending containers
       run: |
-        bin/viash_build
+        bin/viash_build -q 'bcl2fastq|spaceranger'
 
     - name: Download Cell Ranger
       run: |
@@ -51,7 +51,7 @@ jobs:
 
     - name: Download bcl2fastq
       run: |
-        bin/viash run src/cellranger/download_bcl2fastq/config.vsh.yaml -- \
+        bin/viash run src/bcl2fastq/download_bcl2fastq/config.vsh.yaml -- \
           --email "${{ secrets.ILLUMINA_EMAIL }}" \
           --password "${{ secrets.ILLUMINA_PASSWORD }}" \
           --output "bcl2fastq.zip" \
