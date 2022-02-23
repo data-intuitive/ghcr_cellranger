@@ -68,7 +68,7 @@ with tempfile.TemporaryDirectory() as download_dir:
 
     # Download spaceranger
     print("Downloading Space Ranger", flush=True)
-    elem = driver.find_element(By.PARTIAL_LINK_TEXT, "Download - Linux")
+    elem = driver.find_element(By.PARTIAL_LINK_TEXT, "Linux 64-bit")
     elem.click()
     url = elem.get_property("href")
     filename = re.sub("^.*/([^?/]*)?[^/]*$", "\\1", url)
