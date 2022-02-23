@@ -20,7 +20,6 @@ RUN apt-get update && \
   update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 
 # install spaceranger
-RUN mkdir -p /opt/spaceranger
-ENV PATH="/opt/spaceranger/bin:${PATH}"
-COPY spaceranger.tar.gz /opt
-RUN tar -xf "/opt/spaceranger.tar.gz" -C "/opt/spaceranger" --strip 1
+ADD spaceranger.tar.gz /opt
+RUN ln -s $(dirname $(find /opt -name "spaceranger" | grep -i bin)) /opt/spaceranger
+ENV PATH="${PATH}:/opt/spaceranger"

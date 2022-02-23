@@ -20,7 +20,6 @@ RUN apt-get update && \
   update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 
 # install cellranger
-RUN mkdir -p /opt/cellranger
-ENV PATH="/opt/cellranger/bin:${PATH}"
-COPY cellranger.tar.gz /opt
-RUN tar -xf "/opt/cellranger.tar.gz" -C "/opt/cellranger" --strip 1
+ADD cellranger.tar.gz /opt
+RUN ln -s $(dirname $(find /opt -name "cellranger" | grep -i bin)) /opt/cellranger
+ENV PATH="${PATH}:/opt/cellranger"
