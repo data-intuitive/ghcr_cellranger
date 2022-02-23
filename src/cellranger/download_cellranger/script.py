@@ -10,7 +10,7 @@ import sys
 
 ## VIASH START
 par = {
-  'tag': 'latest'
+  'tag': 'latest',
   'timeout': 600,
   'output': 'cellranger.tar.gz',
   'multiplier': 1.0
