@@ -13,12 +13,15 @@ par = {
   'timeout': 600,
   'output': 'bcl2fastq2.zip',
   'account': 'foo',
-  'password': 'bar'
+  'password': 'bar',
+  'multiplier': 1.0
 }
 ## VIASH END
 
-url = f"https://emea.support.illumina.com/downloads/bcl2fastq-conversion-software-v2-20.html"
+url = "https://emea.support.illumina.com/downloads/bcl2fastq-conversion-software-v2-20.html"
 
+def sleep(x):
+    time.sleep(x * par['multiplier'])
 
 with tempfile.TemporaryDirectory() as download_dir:
     print("Opening Firefox", flush=True)
@@ -33,16 +36,16 @@ with tempfile.TemporaryDirectory() as download_dir:
 
     driver = webdriver.Firefox(options=options)
 
-    time.sleep(.5)
+    sleep(2)
 
     print("Navigating to page", flush=True)
     driver.get(url)
-    time.sleep(3)
+    sleep(5)
 
     print("Clicking trust policy", flush=True)
     elem = driver.find_element(By.ID, "onetrust-accept-btn-handler")
     elem.click()
-    time.sleep(3)
+    sleep(5)
 
     print("Clicking url", flush=True)
     elem = driver.find_element(By.PARTIAL_LINK_TEXT, "(Linux rpm)")
@@ -50,24 +53,24 @@ with tempfile.TemporaryDirectory() as download_dir:
     filename = re.sub("^.*assetDetails=([^?/]*.zip).*$", "\\1", url)
     dest_path = os.path.join(download_dir, filename)
     elem.click()
-    time.sleep(20)
+    sleep(20)
 
     print("Fill in login form", flush=True)
     form = driver.find_element(By.NAME, 'signinForm')
-    time.sleep(.1)
+    sleep(.1)
     form.find_element(By.ID, 'login').send_keys(par["email"])
-    time.sleep(.1)
+    sleep(.1)
     form.find_element(By.NAME, 'password').send_keys(par["password"])
-    time.sleep(.1)
+    sleep(.1)
 
     print("Downloading file", flush=True)
     form.submit()
-    time.sleep(20)
+    sleep(20)
 
     print("Waiting until download is complete", flush=True)
     i = 0
     while i < par["timeout"] and os.path.exists(dest_path + ".part"):
-        time.sleep(1)
+        sleep(1)
         print("Content of download dir: " + ', '.join(os.listdir(download_dir)), flush=True)
         i += 1
 

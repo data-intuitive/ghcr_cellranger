@@ -46,14 +46,16 @@ jobs:
       run: |
         bin/viash run src/cellranger/download_cellranger/config.vsh.yaml -- \
           --tag "${{ matrix.config.version }}" \
-          --output "cellranger.tar.gz"
+          --output "cellranger.tar.gz" \
+          --multiplier 2
 
     - name: Download bcl2fastq
       run: |
         bin/viash run src/cellranger/download_bcl2fastq/config.vsh.yaml -- \
           --email "${{ secrets.ILLUMINA_EMAIL }}" \
           --password "${{ secrets.ILLUMINA_PASSWORD }}" \
-          --output "bcl2fastq.zip"
+          --output "bcl2fastq.zip" \
+          --multiplier 2
 
     - name: Login to Github Packages
       uses: docker/login-action@v1

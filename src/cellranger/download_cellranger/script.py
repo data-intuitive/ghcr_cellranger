@@ -12,12 +12,15 @@ import sys
 par = {
   'tag': 'latest'
   'timeout': 600,
-  'output': 'cellranger.tar.gz'
+  'output': 'cellranger.tar.gz',
+  'multiplier': 1.0
 }
 ## VIASH END
 
 url = f"https://support.10xgenomics.com/single-cell-gene-expression/software/downloads/{par['tag']}"
 
+def sleep(x):
+    time.sleep(x * par['multiplier'])
 
 with tempfile.TemporaryDirectory() as download_dir:
     print("Opening Firefox", flush=True)
@@ -34,24 +37,24 @@ with tempfile.TemporaryDirectory() as download_dir:
     def random_keys():
         return "".join([random.choice('qwertzuiopasdfghjklyxcvbnm') for _ in range(random.randrange(5, 10))])
 
-    time.sleep(.5)
+    sleep(5)
 
     print("Navigating to form", flush=True)
     driver.get(url)
 
-    time.sleep(3)
+    sleep(5)
 
     # Fill out form
     form = driver.find_element(By.ID, 'eula-form')
-    time.sleep(.1)
+    sleep(.1)
     form.find_element(By.ID, 'first_name').send_keys(random_keys())
-    time.sleep(.1)
+    sleep(.1)
     form.find_element(By.ID, 'last_name').send_keys(random_keys())
-    time.sleep(.1)
+    sleep(.1)
     form.find_element(By.ID, 'email').send_keys(random_keys() + '@gmail.com')
-    time.sleep(.1)
+    sleep(.1)
     form.find_element(By.ID, 'company').send_keys(random_keys())
-    time.sleep(.1)
+    sleep(.1)
     agree = form.find_element(By.ID, "agree")
     if not agree.is_selected():
         agree.click()
@@ -61,7 +64,7 @@ with tempfile.TemporaryDirectory() as download_dir:
     # Go to download page
     print("Navigating to download page", flush=True)
     form.submit()
-    time.sleep(1)
+    sleep(5)
 
     # Download cellranger
     print("Downloading CellRanger", flush=True)
@@ -70,12 +73,12 @@ with tempfile.TemporaryDirectory() as download_dir:
     url = elem.get_property("href")
     filename = re.sub("^.*/([^?/]*)?[^/]*$", "\\1", url)
     dest_path = os.path.join(download_dir, filename)
-    time.sleep(1)
+    sleep(3)
 
     # Wait until file is completely downloaded before exiting
     i = 0
     while i < par["timeout"] and os.path.exists(dest_path + ".part"):
-        time.sleep(1)
+        sleep(3)
         print("Content of download dir: " + ', '.join(os.listdir(download_dir)), flush=True)
         i += 1
 

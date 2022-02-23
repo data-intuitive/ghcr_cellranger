@@ -23,6 +23,10 @@ functionality:
       type: integer
       description: Timeout in seconds.
       default: 600
+    - name: "--multiplier"
+      type: double
+      description: Wait multiplier.
+      default: 1
     - name: "--output"
       alternatives: ["-o"]
       type: file
