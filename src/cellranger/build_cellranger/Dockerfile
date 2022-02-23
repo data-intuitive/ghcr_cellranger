@@ -1,8 +1,8 @@
 FROM centos:7
 
 LABEL authors="Robrecht Cannoodt <robrecht@data-intuitive.com>" \
-    description="Docker image containing Cell Ranger" \
-    org.opencontainers.image.source="https://github.com/data-intuitive/self_archiving"
+    org.opencontainers.image.description="Docker image containing Cell Ranger" \
+    org.opencontainers.image.source="https://github.com/data-intuitive/ghcr_cellranger"
 
 # Disclaimer: this container is not provided nor supported by 10x Genomics or Illumina.
 
