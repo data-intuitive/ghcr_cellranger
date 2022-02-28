@@ -20,6 +20,6 @@ RUN apt-get update && \
   update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 
 # install cellranger_arc
-ADD cellranger_arc_arc.tar.gz /opt
+ADD cellranger_arc.tar.gz /opt
 RUN ln -s $(dirname $(find /opt -name "cellranger-arc" | grep -i bin)) /opt/cellranger_arc
 ENV PATH="${PATH}:/opt/cellranger_arc"
