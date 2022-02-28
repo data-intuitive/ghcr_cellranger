@@ -14,7 +14,7 @@ jobs:
       matrix:
         config:
         - {version: "1.0", tag: "ghcr.io/data-intuitive/cellranger_arc:1.0"}
-        - {version: "6.1", tag: "ghcr.io/data-intuitive/cellranger_arc:2.0,ghcr.io/data-intuitive/cellranger_arc:latest"}
+        - {version: "2.0", tag: "ghcr.io/data-intuitive/cellranger_arc:2.0,ghcr.io/data-intuitive/cellranger_arc:latest"}
 
     steps:
     - uses: actions/checkout@v2
