@@ -68,7 +68,7 @@ with tempfile.TemporaryDirectory() as download_dir:
 
     # Download cellranger_arc
     print("Downloading Cell Ranger ARC", flush=True)
-    elem = driver.find_element(By.PARTIAL_LINK_TEXT, "Download - Linux")
+    elem = driver.find_element(By.PARTIAL_LINK_TEXT, "Linux 64-bit")
     elem.click()
     url = elem.get_property("href")
     filename = re.sub("^.*/([^?/]*)?[^/]*$", "\\1", url)
