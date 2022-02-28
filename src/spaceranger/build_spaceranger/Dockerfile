@@ -15,7 +15,7 @@ RUN apt-get update && \
 
 # install python3
 RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y python3 && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y python3 python3-pip && \
   rm -rf /var/lib/apt/lists/* && \
   update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 
