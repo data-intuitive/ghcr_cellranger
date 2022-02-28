@@ -29,7 +29,7 @@ jobs:
 
     - name: Build dependending containers
       run: |
-        bin/viash_build -q 'bcl2fastq|spaceranger'
+        bin/viash_build -q 'bcl2fastq|cellranger_arc'
 
     - name: Download Cell Ranger ARC
       run: |
