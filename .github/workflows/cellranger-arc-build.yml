@@ -1,0 +1,65 @@
+name: cellranger-arc-build
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  cellranger-arc-build:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {version: "1.0", tag: "ghcr.io/data-intuitive/cellranger_arc:1.0"}
+        - {version: "6.1", tag: "ghcr.io/data-intuitive/cellranger_arc:2.0,ghcr.io/data-intuitive/cellranger_arc:latest"}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up sbt
+      uses: olafurpg/setup-scala@v10
+
+    - name: Fetch viash
+      run: |
+        bin/init
+        bin/viash -h
+
+    - name: Build dependending containers
+      run: |
+        bin/viash_build -q 'bcl2fastq|spaceranger'
+
+    - name: Download Cell Ranger ARC
+      run: |
+        bin/viash run src/cellranger_arc/download_cellranger_arc/config.vsh.yaml -- \
+          --tag "${{ matrix.config.version }}" \
+          --output "cellranger_arc.tar.gz" \
+          --multiplier 2
+
+    - name: Download bcl2fastq
+      run: |
+        bin/viash run src/bcl2fastq/download_bcl2fastq/config.vsh.yaml -- \
+          --email "${{ secrets.ILLUMINA_EMAIL }}" \
+          --password "${{ secrets.ILLUMINA_PASSWORD }}" \
+          --output "bcl2fastq.zip" \
+          --multiplier 2
+
+    - name: Login to Github Packages
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GTHB_PAT }}
+        
+    - name: Build image
+      run: |
+        bin/viash run src/cellranger_arc/build_cellranger_arc/config.vsh.yaml -- \
+          --input_cellranger_arc "cellranger_arc.tar.gz" \
+          --input_bcl2fastq "bcl2fastq.zip" \
+          --tag "${{ matrix.config.tag }}" \
+          --push
+
+    - name: Image digest
+      run: echo ${{ steps.docker_build.outputs.digest }}
