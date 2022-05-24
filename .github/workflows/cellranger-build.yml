@@ -25,7 +25,8 @@ jobs:
         - {version: "4.0", tag: "ghcr.io/data-intuitive/cellranger:4.0"}
         - {version: "5.0", tag: "ghcr.io/data-intuitive/cellranger:5.0"}
         - {version: "6.0", tag: "ghcr.io/data-intuitive/cellranger:6.0"}
-        - {version: "6.1", tag: "ghcr.io/data-intuitive/cellranger:6.1,ghcr.io/data-intuitive/cellranger:latest"}
+        - {version: "6.1", tag: "ghcr.io/data-intuitive/cellranger:6.1"}
+        - {version: "7.0", tag: "ghcr.io/data-intuitive/cellranger:7.0,ghcr.io/data-intuitive/cellranger:latest"}
 
     steps:
     - uses: actions/checkout@v2
