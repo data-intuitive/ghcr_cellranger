@@ -12,8 +12,8 @@ import sys
 par = {
   'timeout': 600,
   'output': 'bcl-convert.rpm',
-  'email': 'myemail',
-  'password': 'mypass',
+  'email': 'foo',
+  'password': 'bar',
   'multiplier': 1.0
 }
 ## VIASH END
@@ -54,8 +54,11 @@ with tempfile.TemporaryDirectory() as download_dir:
     print("Clicking url", flush=True)
     elem = driver.find_element(By.PARTIAL_LINK_TEXT, "(RPM format)")
     url = elem.get_property("href")
-    filename = re.sub("^.*assetDetails=([^?/]*.rpm).*$", "\\1", url)
+    f1 = re.sub("^.*assetDetails=([^?/]*.rpm).*$", "\\1", url)
+    filename = re.sub("^.*(bcl-convert.*)$", "\\1", f1)
+    print(filename, flush=True)
     dest_path = os.path.join(download_dir, filename)
+    print(dest_path, flush=True)
     elem.click()
     sleep(20)
 
