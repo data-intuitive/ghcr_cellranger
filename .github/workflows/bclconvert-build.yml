@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - {version: "7.0", tag: "ghcr.io/data-intuitive/bclconvert:3.10,ghcr.io/data-intuitive/bclconvert:latest"}
+        - {version: "3.10", tag: "ghcr.io/data-intuitive/bclconvert:3.10,ghcr.io/data-intuitive/bclconvert:latest"}
 
     steps:
     - uses: actions/checkout@v2
@@ -30,9 +30,11 @@ jobs:
       run: |
         bin/viash_build -q 'bclconvert'
 
-    - name: Download Cell Ranger
+    - name: Download BCL Convert
       run: |
         bin/viash run src/bclconvert/download_bclconvert/config.vsh.yaml -- \
+          --email "${{ secrets.ILLUMINA_EMAIL }}" \
+          --password "${{ secrets.ILLUMINA_PASSWORD }}" \
           --output "bclconvert.rpm" \
           --multiplier 2
 
