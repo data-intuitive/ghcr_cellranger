@@ -7,7 +7,9 @@ import shutil
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import sys
+from pathlib import Path
 
+debug = False
 ## VIASH START
 par = {
   'tag': 'latest',
@@ -15,6 +17,7 @@ par = {
   'output': 'cellranger.tar.gz',
   'multiplier': 1.0
 }
+debug = True
 ## VIASH END
 
 url = f"https://support.10xgenomics.com/single-cell-gene-expression/software/downloads/{par['tag']}"
@@ -22,10 +25,22 @@ url = f"https://support.10xgenomics.com/single-cell-gene-expression/software/dow
 def sleep(x):
     time.sleep(x * par['multiplier'])
 
+def is_download_finished(temp_folder):
+    firefox_temp_file = sorted(Path(temp_folder).glob('*.part'))
+    chrome_temp_file = sorted(Path(temp_folder).glob('*.crdownload'))
+    downloaded_files = sorted(Path(temp_folder).glob('*.*'))
+    if (len(firefox_temp_file) == 0) and \
+    (len(chrome_temp_file) == 0) and \
+    (len(downloaded_files) >= 1):
+        return True
+    else:
+        return False
+
+# download_dir = tempfile.TemporaryDirectory().name
 with tempfile.TemporaryDirectory() as download_dir:
     print("Opening Firefox", flush=True)
     options = webdriver.firefox.options.Options()
-    options.headless = True
+    options.headless = not debug
     options.set_preference("browser.download.folderList", 2)
     options.set_preference("browser.download.manager.showWhenStarting", False)
     options.set_preference("browser.download.dir", download_dir)
@@ -77,7 +92,7 @@ with tempfile.TemporaryDirectory() as download_dir:
 
     # Wait until file is completely downloaded before exiting
     i = 0
-    while i < par["timeout"] and os.path.exists(dest_path + ".part"):
+    while i < par["timeout"] and not is_download_finished(download_dir):
         sleep(3)
         print("Content of download dir: " + ', '.join(os.listdir(download_dir)), flush=True)
         i += 1

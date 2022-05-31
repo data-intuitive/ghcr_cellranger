@@ -1,4 +1,3 @@
-import random
 import time
 import os
 import re
@@ -7,14 +6,15 @@ import shutil
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import sys
+from pathlib import Path
 
 debug = False
 ## VIASH START
 par = {
   'timeout': 600,
   'output': 'bcl2fastq2.zip',
-  'email': 'foo',
-  'password': 'bar',
+  'email': os.getenv("ILLUMINA_ACCOUNT"),
+  'password': os.getenv("ILLUMINA_PASS"),
   'multiplier': 1.0
 }
 debug = True
@@ -25,10 +25,21 @@ url = "https://emea.support.illumina.com/downloads/bcl2fastq-conversion-software
 def sleep(x):
     time.sleep(x * par['multiplier'])
 
+def is_download_finished(temp_folder):
+    firefox_temp_file = sorted(Path(temp_folder).glob('*.part'))
+    chrome_temp_file = sorted(Path(temp_folder).glob('*.crdownload'))
+    downloaded_files = sorted(Path(temp_folder).glob('*.*'))
+    if (len(firefox_temp_file) == 0) and \
+    (len(chrome_temp_file) == 0) and \
+    (len(downloaded_files) >= 1):
+        return True
+    else:
+        return False
+
 with tempfile.TemporaryDirectory() as download_dir:
     print("Opening Firefox", flush=True)
     options = webdriver.firefox.options.Options()
-    options.headless = debug
+    options.headless = not debug
     options.set_preference("browser.download.folderList", 2)
     options.set_preference("browser.download.manager.showWhenStarting", False)
     options.set_preference("browser.download.dir", download_dir)
@@ -71,7 +82,7 @@ with tempfile.TemporaryDirectory() as download_dir:
 
     print("Waiting until download is complete", flush=True)
     i = 0
-    while i < par["timeout"] and os.path.exists(dest_path + ".part"):
+    while i < par["timeout"] and not is_download_finished(download_dir):
         sleep(1)
         print("Content of download dir: " + ', '.join(os.listdir(download_dir)), flush=True)
         i += 1

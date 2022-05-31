@@ -7,6 +7,7 @@ import shutil
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import sys
+from pathlib import Path
 
 ## VIASH START
 par = {
@@ -21,6 +22,17 @@ url = f"https://support.10xgenomics.com/single-cell-multiome-atac-gex/software/d
 
 def sleep(x):
     time.sleep(x * par['multiplier'])
+
+def is_download_finished(temp_folder):
+    firefox_temp_file = sorted(Path(temp_folder).glob('*.part'))
+    chrome_temp_file = sorted(Path(temp_folder).glob('*.crdownload'))
+    downloaded_files = sorted(Path(temp_folder).glob('*.*'))
+    if (len(firefox_temp_file) == 0) and \
+    (len(chrome_temp_file) == 0) and \
+    (len(downloaded_files) >= 1):
+        return True
+    else:
+        return False
 
 with tempfile.TemporaryDirectory() as download_dir:
     print("Opening Firefox", flush=True)
@@ -77,7 +89,7 @@ with tempfile.TemporaryDirectory() as download_dir:
 
     # Wait until file is completely downloaded before exiting
     i = 0
-    while i < par["timeout"] and os.path.exists(dest_path + ".part"):
+    while i < par["timeout"] and not is_download_finished(download_dir):
         sleep(3)
         print("Content of download dir: " + ', '.join(os.listdir(download_dir)), flush=True)
         i += 1
