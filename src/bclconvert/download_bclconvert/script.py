@@ -1,4 +1,3 @@
-import random
 import time
 import os
 import re
@@ -8,6 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import sys
 
+debug = False
 ## VIASH START
 par = {
   'timeout': 600,
@@ -16,6 +16,7 @@ par = {
   'password': 'bar',
   'multiplier': 1.0
 }
+debug = True
 ## VIASH END
 
 url = "https://emea.support.illumina.com/sequencing/sequencing_software/bcl-convert/downloads.html"
@@ -26,7 +27,7 @@ def sleep(x):
 with tempfile.TemporaryDirectory() as download_dir:
     print("Opening Firefox", flush=True)
     options = webdriver.firefox.options.Options()
-    options.headless = True
+    options.headless = debug
     options.set_preference("browser.download.folderList", 2)
     options.set_preference("browser.download.manager.showWhenStarting", False)
     options.set_preference("browser.download.dir", download_dir)
