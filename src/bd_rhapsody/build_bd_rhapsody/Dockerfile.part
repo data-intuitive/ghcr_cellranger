@@ -1,0 +1,16 @@
+
+# update packages
+RUN apt-get --allow-releaseinfo-change update && \
+  apt upgrade -y
+
+# update picard
+RUN conda install -y -c bioconda picard=2.27.3 certifi=2022.6.15 conda=4.13.0 openssl=1.1.1o ca-certificates=2022
+
+# install procps and nodejs
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y procps nodejs && \
+  rm -rf /var/lib/apt/lists/*
+
+# install cwl-runner
+RUN pip install --upgrade pip && \
+  pip install --upgrade --no-cache-dir "cwlref-runner" "cwl-runner" "ruamel.yaml"
