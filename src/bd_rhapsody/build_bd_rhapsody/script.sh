@@ -21,14 +21,14 @@ cat "$meta_resources_dir/Dockerfile.part" >> "$tempdir/Dockerfile"
 
 docker build -t "$meta_functionality_name" -f "$tempdir/Dockerfile" "$tempdir"
 
-docker-squash "$meta_functionality_name"
+docker-squash -t "${meta_functionality_name}_squash" "$meta_functionality_name"
 
 if [ ! -z "$par_tag" ]; then
   IFS=","
   for var in $par_tag; do
     echo "Tagging $var"
     unset IFS
-    docker tag "$meta_functionality_name" "$var"
+    docker tag "${meta_functionality_name}_squash" "$var"
 
     if [ "$par_push" == "true" ]; then
       echo "Pushing $var"
