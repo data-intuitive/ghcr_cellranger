@@ -1,4 +1,8 @@
 
+LABEL authors="Robrecht Cannoodt <robrecht@data-intuitive.com>" \
+    org.opencontainers.image.description="Docker image containing the dependencies for running the BD Rhapsody pipeline" \
+    org.opencontainers.image.source="https://github.com/data-intuitive/ghcr_cellranger"
+
 # update packages
 RUN apt-get --allow-releaseinfo-change update && \
   apt upgrade -y
