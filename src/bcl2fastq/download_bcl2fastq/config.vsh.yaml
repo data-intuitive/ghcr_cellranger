@@ -32,7 +32,7 @@ functionality:
       type: file
       direction: output
       description: Output filename.
-      default: "bcl2fastq2.zip"
+      default: "bcl2fastq.zip"
   resources:
     - type: python_script
       path: script.py
