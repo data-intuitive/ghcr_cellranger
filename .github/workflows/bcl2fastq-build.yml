@@ -48,7 +48,7 @@ jobs:
     - name: Build image
       run: |
         bin/viash run src/bcl2fastq/build_bcl2fastq/config.vsh.yaml -- \
-          --input "bcl2fastq.rpm" \
+          --input "bcl2fastq.zip" \
           --tag "${{ matrix.config.tag }}" \
           --push
 
