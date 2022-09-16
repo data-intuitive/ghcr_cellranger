@@ -2,3 +2,4 @@ output
 target
 *.log
 log*
+.viash*

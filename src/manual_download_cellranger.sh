@@ -3,7 +3,7 @@
 bcl2fastq_zip=output/bcl2fastq/bcl2fastq_2.20.zip
 if [ ! -f "$bcl2fastq_zip" ]; then
     echo "Downloading bcl2fastq $tag"
-    bin/viash run src/bcl2fastq/download_bcl2fastq/config.vsh.yaml -- --email "$ILLUMINA_EMAIL" --password "$ILLUMINA_PASSWORD" --output "$bcl2fastq_zip"
+    bin/viash run src/bcl2fastq/download_bcl2fastq/config.vsh.yaml -- --email "$ILLUMINA_ACCOUNT" --password "$ILLUMINA_PASS" --output "$bcl2fastq_zip"
 fi
 
 for tag in 6.1 6.0 5.0 4.0 3.1 3.0 2.2 2.1 2.0 1.3 1.2 1.1 1.0; do

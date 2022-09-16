@@ -12,7 +12,7 @@ debug = False
 ## VIASH START
 par = {
   'timeout': 600,
-  'output': 'bcl2fastq2.zip',
+  'output': 'bcl-convert.rpm',
   'email': os.getenv("ILLUMINA_ACCOUNT"),
   'password': os.getenv("ILLUMINA_PASS"),
   'multiplier': 1.0
@@ -20,7 +20,7 @@ par = {
 debug = True
 ## VIASH END
 
-url = "https://emea.support.illumina.com/downloads/bcl2fastq-conversion-software-v2-20.html"
+url = "https://emea.support.illumina.com/sequencing/sequencing_software/bcl-convert/downloads.html"
 
 def sleep(x):
     time.sleep(x * par['multiplier'])
@@ -36,16 +36,19 @@ def is_download_finished(temp_folder):
     else:
         return False
 
+# download_dir = tempfile.TemporaryDirectory().name
 with tempfile.TemporaryDirectory() as download_dir:
     print("Opening Firefox", flush=True)
     options = webdriver.firefox.options.Options()
     options.headless = not debug
     options.set_preference("browser.download.folderList", 2)
+    options.set_preference("browser.privatebrowsing.autostart", True)
     options.set_preference("browser.download.manager.showWhenStarting", False)
     options.set_preference("browser.download.dir", download_dir)
     options.set_preference("browser.download.panel.shown", False)
     options.set_preference("browser.helperApps.alwaysAsk.force", False)
     options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/zip")
+    options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-rpm")
 
     driver = webdriver.Firefox(options=options)
 
@@ -60,11 +63,20 @@ with tempfile.TemporaryDirectory() as download_dir:
     elem.click()
     sleep(5)
 
+    print("View options", flush=True)
+    elem = driver.find_element(By.PARTIAL_LINK_TEXT, "View Options")
+    elem.click()
+    sleep(5)
+
     print("Clicking url", flush=True)
-    elem = driver.find_element(By.PARTIAL_LINK_TEXT, "(Linux rpm)")
+    elem = driver.find_element(By.PARTIAL_LINK_TEXT, "(RPM format)")
     url = elem.get_property("href")
-    filename = re.sub("^.*assetDetails=([^?/]*.zip).*$", "\\1", url)
-    dest_path = os.path.join(download_dir, filename)
+    f1 = re.sub("^.*assetDetails=([^?/]*.rpm).*$", "\\1", url)
+    filename = re.sub("^.*(bcl-convert.*)$", "\\1", f1)
+    dest_path = os.path.join(str(download_dir), filename)
+
+    print(f"filename: {filename}")
+    print(f"dest_path: {dest_path}")
     elem.click()
     sleep(20)
 
@@ -78,7 +90,8 @@ with tempfile.TemporaryDirectory() as download_dir:
 
     print("Downloading file", flush=True)
     form.submit()
-    sleep(20)
+    
+    sleep(10)
 
     print("Waiting until download is complete", flush=True)
     i = 0
@@ -87,6 +100,8 @@ with tempfile.TemporaryDirectory() as download_dir:
         print("Content of download dir: " + ', '.join(os.listdir(download_dir)), flush=True)
         i += 1
 
+    print("Content of download dir: " + ', '.join(os.listdir(download_dir)), flush=True)
+    
     print("Quitting firefox", flush=True)
     driver.quit()
 
