@@ -8,6 +8,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import sys
 from pathlib import Path
+import glob
 
 debug = False
 ## VIASH START
@@ -100,11 +101,16 @@ with tempfile.TemporaryDirectory() as download_dir:
     print("Quitting firefox", flush=True)
     driver.quit()
 
-    if not os.path.exists(dest_path):
+    files = os.listdir(download_dir)
+
+    if is_download_finished(download_dir) and len(files) != 1:
+        print("Content of download dir: " + ', '.join(files), flush=True)
         raise FileNotFoundError(f"Download has not completed after {par['timeout']}s. Is this script still working?")
 
+    dest_path = files[0]
+
     print(f"Copying {dest_path} to {par['output']}", flush=True)
-    shutil.copy(dest_path, par["output"])
+    shutil.copy(os.path.join(download_dir, dest_path), par["output"])
 
     print("Download complete", flush=True)
     sys.stdout.flush()
