@@ -1,19 +1,22 @@
 name: bcl2fastq-build
 
-on:
-  push:
-    branches: [ main ]
+on: 
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version of the tool to download
+        required: true
+      latest:
+        description: Whether to mark the image as latest
+        type: boolean
+        required: true
 
 jobs:
   bcl2fastq-build:
+    env:
+      base_name: ghcr.io/data-intuitive/bcl2fastq
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'ci skip')"
-
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-        - {version: "3.10", tag: "ghcr.io/data-intuitive/bcl2fastq:2.20,ghcr.io/data-intuitive/bcl2fastq:latest"}
 
     steps:
     - uses: actions/checkout@v2
@@ -32,6 +35,8 @@ jobs:
 
     - name: Download bcl2fastq
       run: |
+        echo "Error: allow passing version number to component"
+        exit 1
         bin/viash run src/bcl2fastq/download_bcl2fastq/config.vsh.yaml -- \
           --email "${{ secrets.ILLUMINA_EMAIL }}" \
           --password "${{ secrets.ILLUMINA_PASSWORD }}" \
@@ -47,9 +52,13 @@ jobs:
 
     - name: Build image
       run: |
+        version="${{ github.event.inputs.version }}"
+        tag=$base_name:$version
+        if [[ "${{ github.event.inputs.version }}" == "latest" ]]; then
+          tag="$tag,$base_name:latest"
         bin/viash run src/bcl2fastq/build_bcl2fastq/config.vsh.yaml -- \
           --input "bcl2fastq.zip" \
-          --tag "${{ matrix.config.tag }}" \
+          --tag "$tag" \
           --push
 
     - name: Image digest
