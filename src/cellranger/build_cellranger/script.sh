@@ -7,6 +7,16 @@ par_tag='ghcr.io/data-intuitive/cellranger:latest'
 meta_functionality_name='build_cellranger'
 ## VIASH END
 
+
+if [ "$par_push" == "true" ] && [ "$par_pushifnotpresent" == "true" ]; then
+  echo "Cannot combine --push with --pushifnotpresent"
+
+fi
+
+function DockerRemoteTagCheck {
+  docker manifest inspect $1 > /dev/null 2> /dev/null
+}
+
 tempdir=$(mktemp -d "$VIASH_TEMP/run-${meta_functionality_name}-XXXXXX")
 if [[ ! "$tempdir" || ! -d "$tempdir" ]]; then
   echo "Could not create temp dir"
@@ -37,6 +47,19 @@ if [ ! -z "$par_tag" ]; then
     if [ "$par_push" == "true" ]; then
       echo "Pushing $var"
       docker push "$var"
+    elif [ "$par_pushifnotpresent" == "true" ]; then
+      echo "Pushing $var if not present"
+      # Save current shell options
+      save=$-; set +e
+      DockerRemoteTagCheck $var
+      outCheck=$?
+      [[ $save =~ e ]] && set -e
+      if [ $outCheck -eq 0 ]; then
+        echo "Container '$var' exists, doing nothing."
+      else
+        echo "Container does not exist in registy. Pushing"
+        docker push $var
+      fi
     fi
   done
 fi

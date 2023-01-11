@@ -6,7 +6,7 @@ if [ ! -f "$bcl2fastq_zip" ]; then
     bin/viash run src/bcl2fastq/download_bcl2fastq/config.vsh.yaml -- --email "$ILLUMINA_ACCOUNT" --password "$ILLUMINA_PASS" --output "$bcl2fastq_zip"
 fi
 
-for tag in 6.1 6.0 5.0 4.0 3.1 3.0 2.2 2.1 2.0 1.3 1.2 1.1 1.0; do
+for tag in 7.1 7.0 6.1 6.0 5.0 4.0 3.1 3.0 2.2 2.1 2.0 1.3 1.2 1.1; do
     tar_gz="output/cellranger/cellranger_$tag.tar.gz"
 
     if [ ! -f "$tar_gz" ]; then
@@ -15,17 +15,20 @@ for tag in 6.1 6.0 5.0 4.0 3.1 3.0 2.2 2.1 2.0 1.3 1.2 1.1 1.0; do
     fi
 
     echo "Building image for Cell Ranger $tag"
-    if [ "$tag" == "6.1" ]; then
+    if [ "$tag" == "7.1" ]; then
         latest_tag=",ghcr.io/data-intuitive/cellranger:latest"
+        push_option="--push"
     else
         latest_tag=""
+        push_option="--pushifnotpresent"
+
     fi
 
     bin/viash run src/cellranger/build_cellranger/config.vsh.yaml -- \
       --input_cellranger "$tar_gz" \
       --input_bcl2fastq "$bcl2fastq_zip" \
       --tag "ghcr.io/data-intuitive/cellranger:$tag$latest_tag" \
-      --push
+      "$push_option"
 
     # exit 1
 done
