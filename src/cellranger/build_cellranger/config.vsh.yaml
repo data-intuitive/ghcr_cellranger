@@ -25,6 +25,9 @@ functionality:
     - name: "--push"
       type: boolean_true
       description: Whether or not to try to push the image to the corresponding registry.
+    - name: "--pushifnotpresent"
+      type: boolean_true
+      description: Push the container to the registry if it does not exist yet.
   resources:
     - type: bash_script
       path: script.sh
