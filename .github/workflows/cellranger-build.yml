@@ -10,6 +10,10 @@ on:
         description: Whether to mark the image as latest
         type: boolean
         required: true
+      push: 
+        description: Whether or not to push the image
+        type: boolean
+        required: true
 
 jobs:
   cellranger-build:
@@ -20,9 +24,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
-    - name: Set up sbt
-      uses: olafurpg/setup-scala@v13
 
     - uses: viash-io/viash-actions/setup@v4
 
@@ -54,6 +55,9 @@ jobs:
         
     - name: Build image
       run: |
+        if [ ${{ github.event.inputs.push }} == 'true' ]; then
+          should_push=1
+        fi
         version="${{ github.event.inputs.version }}"
         tag=$base_name:$version
         if [[ "${{ github.event.inputs.version }}" == "latest" ]]; then
@@ -61,8 +65,5 @@ jobs:
         viash run src/cellranger/build_cellranger/config.vsh.yaml -- \
           --input_cellranger "cellranger.tar.gz" \
           --input_bcl2fastq "bcl2fastq.zip" \
-          --tag "$tag" \
-          --push
+          --tag "$tag" ${should_push:+--push}
 
-    - name: Image digest
-      run: echo ${{ steps.docker_build.outputs.digest }}

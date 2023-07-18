@@ -10,6 +10,10 @@ on:
         description: Whether to mark the image as latest
         type: boolean
         required: true
+      push: 
+        description: Whether or not to push the image
+        type: boolean
+        required: true
 
 jobs:
   bd-rhapsody-build:
@@ -20,9 +24,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
-    - name: Set up sbt
-      uses: olafurpg/setup-scala@v13
 
     - uses: viash-io/viash-actions/setup@v4
 
@@ -39,6 +40,9 @@ jobs:
         
     - name: Build image
       run: |
+        if [ ${{ github.event.inputs.push }} == 'true' ]; then
+          should_push=1
+        fi
         version="${{ github.event.inputs.version }}"
         tag=$base_name:$version
         if [[ "${{ github.event.inputs.version }}" == "latest" ]]; then
@@ -47,6 +51,3 @@ jobs:
           --from "bdgenomics/rhapsody:$version" \
           --tag "$tag" \
           --push
-
-    - name: Image digest
-      run: echo ${{ steps.docker_build.outputs.digest }}
