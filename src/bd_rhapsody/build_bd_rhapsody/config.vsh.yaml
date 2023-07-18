@@ -1,7 +1,7 @@
 functionality:
   name: build_bd_rhapsody
   namespace: bd_rhapsody
-  description: "A helper script to update and squash the BD Rhapsody image."
+  description: "A helper script to update the BD Rhapsody image."
   authors:
     - name: Robrecht Cannoodt
       email: rcannood@gmail.com

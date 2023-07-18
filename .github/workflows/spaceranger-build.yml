@@ -24,25 +24,22 @@ jobs:
     - name: Set up sbt
       uses: olafurpg/setup-scala@v13
 
-    - name: Fetch viash
-      run: |
-        bin/init
-        bin/viash -h
+    - uses: viash-io/viash-actions/setup@v4
 
     - name: Build dependending containers
       run: |
-        bin/viash_build -q 'bcl2fastq|spaceranger'
+        viash ns build -q 'bcl2fastq|spaceranger'
 
     - name: Download Space Ranger
       run: |
-        bin/viash run src/spaceranger/download_spaceranger/config.vsh.yaml -- \
+        viash run src/spaceranger/download_spaceranger/config.vsh.yaml -- \
           --tag "${{ github.event.inputs.version }}" \
           --output "spaceranger.tar.gz" \
           --multiplier 2
 
     - name: Download bcl2fastq
       run: |
-        bin/viash run src/bcl2fastq/download_bcl2fastq/config.vsh.yaml -- \
+        viash run src/bcl2fastq/download_bcl2fastq/config.vsh.yaml -- \
           --email "${{ secrets.ILLUMINA_EMAIL }}" \
           --password "${{ secrets.ILLUMINA_PASSWORD }}" \
           --output "bcl2fastq.zip" \
@@ -61,7 +58,7 @@ jobs:
         tag=$base_name:$version
         if [[ "${{ github.event.inputs.version }}" == "latest" ]]; then
           tag="$tag,$base_name:latest"
-        bin/viash run src/spaceranger/build_spaceranger/config.vsh.yaml -- \
+        viash run src/spaceranger/build_spaceranger/config.vsh.yaml -- \
           --input_spaceranger "spaceranger.tar.gz" \
           --input_bcl2fastq "bcl2fastq.zip" \
           --tag "$tag" \

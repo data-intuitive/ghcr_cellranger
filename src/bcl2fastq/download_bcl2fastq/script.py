@@ -5,6 +5,8 @@ import tempfile
 import shutil
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from webdriver_manager.firefox import GeckoDriverManager
 import sys
 from pathlib import Path
 
@@ -39,26 +41,27 @@ def is_download_finished(temp_folder):
 with tempfile.TemporaryDirectory() as download_dir:
     print("Opening Firefox", flush=True)
     options = webdriver.firefox.options.Options()
-    options.headless = not debug
+    if not debug:
+        options.add_argument('--headless')
+    options.add_argument('--disable-gpu')
     options.set_preference("browser.download.folderList", 2)
     options.set_preference("browser.download.manager.showWhenStarting", False)
     options.set_preference("browser.download.dir", download_dir)
     options.set_preference("browser.download.panel.shown", False)
     options.set_preference("browser.helperApps.alwaysAsk.force", False)
     options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/zip")
-
-    driver = webdriver.Firefox(options=options)
-
+    service = FirefoxService(GeckoDriverManager().install())
+    driver = webdriver.Firefox(service=service, options=options)  
     sleep(2)
 
     print("Navigating to page", flush=True)
     driver.get(url)
     sleep(5)
 
-    print("Clicking trust policy", flush=True)
-    elem = driver.find_element(By.ID, "onetrust-accept-btn-handler")
-    elem.click()
-    sleep(5)
+    # print("Clicking trust policy", flush=True)
+    # elem = driver.find_element(By.ID, "onetrust-accept-btn-handler")
+    # elem.click()
+    # sleep(5)
 
     print("Clicking url", flush=True)
     elem = driver.find_element(By.PARTIAL_LINK_TEXT, "(Linux rpm)")
@@ -69,15 +72,16 @@ with tempfile.TemporaryDirectory() as download_dir:
     sleep(20)
 
     print("Fill in login form", flush=True)
-    form = driver.find_element(By.NAME, 'signinForm')
+    form = driver.find_element(By.CLASS_NAME, 'a-sign-in-form')
     sleep(.1)
     form.find_element(By.ID, 'login').send_keys(par["email"])
     sleep(.1)
     form.find_element(By.NAME, 'password').send_keys(par["password"])
     sleep(.1)
+    button = form.find_element(By.CSS_SELECTOR, '[value="Sign In"]')
 
     print("Downloading file", flush=True)
-    form.submit()
+    button.click()
     sleep(20)
 
     print("Waiting until download is complete", flush=True)

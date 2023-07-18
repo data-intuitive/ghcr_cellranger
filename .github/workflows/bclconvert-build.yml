@@ -24,20 +24,17 @@ jobs:
     - name: Set up sbt
       uses: olafurpg/setup-scala@v13
 
-    - name: Fetch viash
-      run: |
-        bin/init
-        bin/viash -h
+    - uses: viash-io/viash-actions/setup@v4
 
     - name: Build dependending containers
       run: |
-        bin/viash_build -q 'bclconvert'
+        viash ns build -q 'bclconvert'
 
     - name: Download BCL Convert
       run: |
         echo "Error: allow passing version number to component"
         exit 1
-        bin/viash run src/bclconvert/download_bclconvert/config.vsh.yaml -- \
+        viash run src/bclconvert/download_bclconvert/config.vsh.yaml -- \
           --email "${{ secrets.ILLUMINA_EMAIL }}" \
           --password "${{ secrets.ILLUMINA_PASSWORD }}" \
           --output "bclconvert.rpm" \
@@ -56,7 +53,7 @@ jobs:
         tag=$base_name:$version
         if [[ "${{ github.event.inputs.version }}" == "latest" ]]; then
           tag="$tag,$base_name:latest"
-        bin/viash run src/bclconvert/build_bclconvert/config.vsh.yaml -- \
+        viash run src/bclconvert/build_bclconvert/config.vsh.yaml -- \
           --input "bclconvert.rpm" \
           --tag "$tag" \
           --push

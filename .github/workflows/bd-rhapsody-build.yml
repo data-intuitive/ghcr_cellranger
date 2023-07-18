@@ -24,18 +24,11 @@ jobs:
     - name: Set up sbt
       uses: olafurpg/setup-scala@v13
 
-    - name: Fetch viash
-      run: |
-        bin/init
-        bin/viash -h
-
-    - name: Install docker-squash
-      run: |
-        pip install --user docker-squash
+    - uses: viash-io/viash-actions/setup@v4
 
     - name: Build dependending containers
       run: |
-        bin/viash_build -q 'bd_rhapsody'
+        viash ns build -q 'bd_rhapsody'
 
     - name: Login to Github Packages
       uses: docker/login-action@v2
@@ -50,7 +43,7 @@ jobs:
         tag=$base_name:$version
         if [[ "${{ github.event.inputs.version }}" == "latest" ]]; then
           tag="$tag,$base_name:latest"
-        bin/viash run src/bd_rhapsody/build_bd_rhapsody/config.vsh.yaml -- \
+        viash run src/bd_rhapsody/build_bd_rhapsody/config.vsh.yaml -- \
           --from "bdgenomics/rhapsody:$version" \
           --tag "$tag" \
           --push
