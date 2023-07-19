@@ -82,7 +82,7 @@ with tempfile.TemporaryDirectory() as download_dir:
 
     print("View options", flush=True)
     if par['tag'] != "latest":
-        elem = driver.find_element(By.XPATH, f"//*[contains(text(),'BCL Convert v{par['tag']} Installers')]/following-sibling::div[contains(@class, 'show-hide-trigger')]/a")
+        elem = driver.find_element(By.XPATH, f"//*[contains(text(),'BCL Convert v{par['tag']} Installer')]/following-sibling::div[contains(@class, 'show-hide-trigger')]/a")
         scroll_shim(driver, elem)
         webdriver.ActionChains(driver)\
             .scroll_to_element(elem)\

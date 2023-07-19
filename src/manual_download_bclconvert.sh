@@ -10,7 +10,7 @@ for tag in 3.10.12 4.0.5 4.1.7; do
 
     if [ ! -f "$bclconvert_rpm" ]; then
         echo "Downloading BCL convert $tag"
-        viash run src/bclconvert/download_bclconvert/config.vsh.yaml -- --email "$ILLUMINA_ACCOUNT" --password "$ILLUMINA_PASS" --output "$bclconvert_rpm"
+        viash run src/bclconvert/download_bclconvert/config.vsh.yaml -- --tag $tag --email "$ILLUMINA_ACCOUNT" --password "$ILLUMINA_PASS" --output "$bclconvert_rpm"
     fi
 
     echo "Building image for BCL convert $tag"
