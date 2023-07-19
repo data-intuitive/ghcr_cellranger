@@ -5,6 +5,8 @@ import re
 import tempfile
 import shutil
 from selenium import webdriver
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.common.by import By
 import sys
 from pathlib import Path
@@ -37,14 +39,16 @@ def is_download_finished(temp_folder):
 with tempfile.TemporaryDirectory() as download_dir:
     print("Opening Firefox", flush=True)
     options = webdriver.firefox.options.Options()
-    options.headless = True
+    options.add_argument("--headless")
     options.set_preference("browser.download.folderList", 2)
     options.set_preference("browser.download.manager.showWhenStarting", False)
+    options.set_preference("browser.download.panel.shown", False)
     options.set_preference("browser.download.dir", download_dir)
     options.set_preference("browser.helperApps.alwaysAsk.force", False)
     options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/zip,application/x-gzip,application/x-tar")
 
-    driver = webdriver.Firefox(options=options)
+    service = FirefoxService(GeckoDriverManager().install())
+    driver = webdriver.Firefox(service=service, options=options)
 
     def random_keys():
         return "".join([random.choice('qwertzuiopasdfghjklyxcvbnm') for _ in range(random.randrange(5, 10))])
@@ -85,6 +89,7 @@ with tempfile.TemporaryDirectory() as download_dir:
     url = elem.get_property("href")
     filename = re.sub("^.*/([^?/]*)?[^/]*$", "\\1", url)
     dest_path = os.path.join(download_dir, filename)
+    dest_path = str(Path(dest_path).with_suffix('.tar'))
     sleep(3)
 
     # Wait until file is completely downloaded before exiting

@@ -31,18 +31,4 @@ functionality:
     - type: python_script
       path: script.py
 platforms:
-  - type: docker
-    image: "ubuntu:20.04"
-    setup:
-      - type: apt
-        packages: [ python3, firefox, python3-pip, curl ]
-      - type: python
-        packages: [ selenium, requests ]
-      - type: docker
-        run: 
-          - curl -sSLO https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux64.tar.gz &&
-            tar zxf geckodriver-*.tar.gz &&
-            mv geckodriver /usr/bin &&
-            rm geckodriver-*.tar.gz
-          #- update-alternatives --install /usr/bin/python python /usr/bin/python3 1
-          - ln -sf /usr/bin/python3 /usr/bin/python
+  - __merge__: ["/src/base/base_download_docker_platform.yaml"]

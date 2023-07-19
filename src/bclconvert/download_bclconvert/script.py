@@ -5,6 +5,8 @@ import tempfile
 import shutil
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from webdriver_manager.firefox import GeckoDriverManager
 import sys
 from pathlib import Path
 
@@ -15,7 +17,8 @@ par = {
   'output': 'bcl-convert.rpm',
   'email': os.getenv("ILLUMINA_ACCOUNT"),
   'password': os.getenv("ILLUMINA_PASS"),
-  'multiplier': 1.0
+  'multiplier': 1.0,
+  'tag': '4.0.5'
 }
 debug = True
 ## VIASH END
@@ -36,11 +39,25 @@ def is_download_finished(temp_folder):
     else:
         return False
 
+# From https://stackoverflow.com/questions/44777053/selenium-movetargetoutofboundsexception-with-firefox
+def scroll_shim(passed_in_driver, object):
+    x = object.location['x']
+    y = object.location['y']
+    scroll_by_coord = 'window.scrollTo(%s,%s);' % (
+        x,
+        y
+    )
+    scroll_nav_out_of_way = 'window.scrollBy(0, -120);'
+    passed_in_driver.execute_script(scroll_by_coord)
+    passed_in_driver.execute_script(scroll_nav_out_of_way)
+
 # download_dir = tempfile.TemporaryDirectory().name
 with tempfile.TemporaryDirectory() as download_dir:
     print("Opening Firefox", flush=True)
     options = webdriver.firefox.options.Options()
-    options.headless = not debug
+    if not debug:
+        options.add_argument('--headless')
+    options.add_argument('--disable-gpu')
     options.set_preference("browser.download.folderList", 2)
     options.set_preference("browser.privatebrowsing.autostart", True)
     options.set_preference("browser.download.manager.showWhenStarting", False)
@@ -50,26 +67,40 @@ with tempfile.TemporaryDirectory() as download_dir:
     options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/zip")
     options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-rpm")
 
-    driver = webdriver.Firefox(options=options)
-
+    service = FirefoxService(GeckoDriverManager().install())
+    driver = webdriver.Firefox(service=service, options=options)  
     sleep(2)
 
     print("Navigating to page", flush=True)
     driver.get(url)
     sleep(5)
 
-    print("Clicking trust policy", flush=True)
-    elem = driver.find_element(By.ID, "onetrust-accept-btn-handler")
-    elem.click()
-    sleep(5)
+    # print("Clicking trust policy", flush=True)
+    # elem = driver.find_element(By.ID, "onetrust-accept-btn-handler")
+    # elem.click()
+    # sleep(5)
 
     print("View options", flush=True)
-    elem = driver.find_element(By.PARTIAL_LINK_TEXT, "View Options")
+    if par['tag'] != "latest":
+        elem = driver.find_element(By.XPATH, f"//*[contains(text(),'BCL Convert v{par['tag']} Installer')]/following-sibling::div[contains(@class, 'show-hide-trigger')]/a")
+        scroll_shim(driver, elem)
+        webdriver.ActionChains(driver)\
+            .scroll_to_element(elem)\
+            .perform()
+        sleep(5)
+    else:
+        elem = driver.find_element(By.PARTIAL_LINK_TEXT, "View Options")
+    
     elem.click()
     sleep(5)
 
     print("Clicking url", flush=True)
-    elem = driver.find_element(By.PARTIAL_LINK_TEXT, "(RPM format)")
+    if par['tag'] != "latest":
+        elem = driver.find_element(By.XPATH, f'//a[contains(@href, ".rpm") and contains(@href, "{par["tag"]}")]')
+    else:
+        elem = driver.find_element(By.XPATH, '//a[contains(@href, ".rpm")]')
+
+
     url = elem.get_property("href")
     f1 = re.sub("^.*assetDetails=([^?/]*.rpm).*$", "\\1", url)
     filename = re.sub("^.*(bcl-convert.*)$", "\\1", f1)
@@ -80,18 +111,18 @@ with tempfile.TemporaryDirectory() as download_dir:
     elem.click()
     sleep(20)
 
-    print("Fill in login form", flush=True)
-    form = driver.find_element(By.NAME, 'signinForm')
-    sleep(.1)
-    form.find_element(By.ID, 'login').send_keys(par["email"])
-    sleep(.1)
-    form.find_element(By.NAME, 'password').send_keys(par["password"])
-    sleep(.1)
+    # print("Fill in login form", flush=True)
+    # form = driver.find_element(By.NAME, 'signinForm')
+    # sleep(.1)
+    # form.find_element(By.ID, 'login').send_keys(par["email"])
+    # sleep(.1)
+    # form.find_element(By.NAME, 'password').send_keys(par["password"])
+    # sleep(.1)
 
-    print("Downloading file", flush=True)
-    form.submit()
+    # print("Downloading file", flush=True)
+    # form.submit()
     
-    sleep(10)
+    # sleep(10)
 
     print("Waiting until download is complete", flush=True)
     i = 0

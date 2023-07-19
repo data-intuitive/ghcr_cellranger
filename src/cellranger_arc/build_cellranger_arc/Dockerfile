@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 LABEL authors="Robrecht Cannoodt <robrecht@data-intuitive.com>" \
     org.opencontainers.image.description="Docker image containing Cell Ranger ARC" \
@@ -15,9 +15,8 @@ RUN apt-get update && \
 
 # install python3
 RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y python3 python3-pip && \
-  rm -rf /var/lib/apt/lists/* && \
-  update-alternatives --install /usr/bin/python python /usr/bin/python3 1
+  DEBIAN_FRONTEND=noninteractive apt-get install -y python3 python3-pip python-is-python3 && \
+  rm -rf /var/lib/apt/lists/*
 
 # install cellranger_arc
 ADD cellranger_arc.tar.gz /opt
