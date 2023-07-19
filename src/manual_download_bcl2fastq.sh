@@ -12,4 +12,4 @@ fi
 
 viash run src/bcl2fastq/build_bcl2fastq/config.vsh.yaml -- \
     --input "$bcl2fastq_zip" \
-    --tag "ghcr.io/data-intuitive/bcl2fastq:manual"
+    --tag "ghcr.io/data-intuitive/bcl2fastq:2.20,ghcr.io/data-intuitive/bcl2fastq:latest"

@@ -89,6 +89,7 @@ with tempfile.TemporaryDirectory() as download_dir:
     url = elem.get_property("href")
     filename = re.sub("^.*/([^?/]*)?[^/]*$", "\\1", url)
     dest_path = os.path.join(download_dir, filename)
+    dest_path = str(Path(dest_path).with_suffix('.tar'))
     sleep(3)
 
     # Wait until file is completely downloaded before exiting

@@ -17,7 +17,8 @@ par = {
   'output': 'bcl-convert.rpm',
   'email': os.getenv("ILLUMINA_ACCOUNT"),
   'password': os.getenv("ILLUMINA_PASS"),
-  'multiplier': 1.0
+  'multiplier': 1.0,
+  'tag': '4.0.5'
 }
 debug = True
 ## VIASH END
@@ -37,6 +38,18 @@ def is_download_finished(temp_folder):
         return True
     else:
         return False
+
+# From https://stackoverflow.com/questions/44777053/selenium-movetargetoutofboundsexception-with-firefox
+def scroll_shim(passed_in_driver, object):
+    x = object.location['x']
+    y = object.location['y']
+    scroll_by_coord = 'window.scrollTo(%s,%s);' % (
+        x,
+        y
+    )
+    scroll_nav_out_of_way = 'window.scrollBy(0, -120);'
+    passed_in_driver.execute_script(scroll_by_coord)
+    passed_in_driver.execute_script(scroll_nav_out_of_way)
 
 # download_dir = tempfile.TemporaryDirectory().name
 with tempfile.TemporaryDirectory() as download_dir:
@@ -68,12 +81,26 @@ with tempfile.TemporaryDirectory() as download_dir:
     # sleep(5)
 
     print("View options", flush=True)
-    elem = driver.find_element(By.PARTIAL_LINK_TEXT, "View Options")
+    if par['tag'] != "latest":
+        elem = driver.find_element(By.XPATH, f"//*[contains(text(),'BCL Convert v{par['tag']} Installers')]/following-sibling::div[contains(@class, 'show-hide-trigger')]/a")
+        scroll_shim(driver, elem)
+        webdriver.ActionChains(driver)\
+            .scroll_to_element(elem)\
+            .perform()
+        sleep(5)
+    else:
+        elem = driver.find_element(By.PARTIAL_LINK_TEXT, "View Options")
+    
     elem.click()
     sleep(5)
 
     print("Clicking url", flush=True)
-    elem = driver.find_element(By.XPATH, '//a[contains(@href, ".rpm")]')
+    if par['tag'] != "latest":
+        elem = driver.find_element(By.XPATH, f'//a[contains(@href, ".rpm") and contains(@href, "{par["tag"]}")]')
+    else:
+        elem = driver.find_element(By.XPATH, '//a[contains(@href, ".rpm")]')
+
+
     url = elem.get_property("href")
     f1 = re.sub("^.*assetDetails=([^?/]*.rpm).*$", "\\1", url)
     filename = re.sub("^.*(bcl-convert.*)$", "\\1", f1)

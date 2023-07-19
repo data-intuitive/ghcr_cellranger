@@ -10,10 +10,6 @@ on:
         description: Whether to mark the image as latest
         type: boolean
         required: true
-      push: 
-        description: Whether or not to push the image
-        type: boolean
-        required: true
 
 jobs:
   bclconvert-build:
@@ -25,17 +21,23 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: viash-io/viash-actions/setup@v4
+    - name: Set up sbt
+      uses: olafurpg/setup-scala@v13
+
+    - name: Fetch viash
+      run: |
+        bin/init
+        bin/viash -h
 
     - name: Build dependending containers
       run: |
-        viash ns build -q 'bclconvert'
+        bin/viash_build -q 'bclconvert'
 
     - name: Download BCL Convert
       run: |
         echo "Error: allow passing version number to component"
         exit 1
-        viash run src/bclconvert/download_bclconvert/config.vsh.yaml -- \
+        bin/viash run src/bclconvert/download_bclconvert/config.vsh.yaml -- \
           --email "${{ secrets.ILLUMINA_EMAIL }}" \
           --password "${{ secrets.ILLUMINA_PASSWORD }}" \
           --output "bclconvert.rpm" \
@@ -50,13 +52,14 @@ jobs:
         
     - name: Build image
       run: |
-        if [ ${{ github.event.inputs.push }} == 'true' ]; then
-          should_push=1
-        fi
         version="${{ github.event.inputs.version }}"
         tag=$base_name:$version
         if [[ "${{ github.event.inputs.version }}" == "latest" ]]; then
           tag="$tag,$base_name:latest"
-        viash run src/bclconvert/build_bclconvert/config.vsh.yaml -- \
+        bin/viash run src/bclconvert/build_bclconvert/config.vsh.yaml -- \
           --input "bclconvert.rpm" \
-          --tag "$tag" ${should_push:+--push}
+          --tag "$tag" \
+          --push
+
+    - name: Image digest
+      run: echo ${{ steps.docker_build.outputs.digest }}

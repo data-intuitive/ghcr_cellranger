@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eo pipefail
+
 bcl2fastq_zip="$HOME/.cache/ghcr_cellranger/bcl2fastq/bcl2fastq_2.20.zip"
 if [ ! -f "$bcl2fastq_zip" ]; then
     echo "Downloading bcl2fastq $tag"

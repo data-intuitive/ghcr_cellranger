@@ -10,10 +10,6 @@ on:
         description: Whether to mark the image as latest
         type: boolean
         required: true
-      push: 
-        description: Whether or not to push the image
-        type: boolean
-        required: true
 
 jobs:
   spaceranger-build:
@@ -25,22 +21,28 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: viash-io/viash-actions/setup@v4
+    - name: Set up sbt
+      uses: olafurpg/setup-scala@v13
+
+    - name: Fetch viash
+      run: |
+        bin/init
+        bin/viash -h
 
     - name: Build dependending containers
       run: |
-        viash ns build -q 'bcl2fastq|spaceranger'
+        bin/viash_build -q 'bcl2fastq|spaceranger'
 
     - name: Download Space Ranger
       run: |
-        viash run src/spaceranger/download_spaceranger/config.vsh.yaml -- \
+        bin/viash run src/spaceranger/download_spaceranger/config.vsh.yaml -- \
           --tag "${{ github.event.inputs.version }}" \
           --output "spaceranger.tar.gz" \
           --multiplier 2
 
     - name: Download bcl2fastq
       run: |
-        viash run src/bcl2fastq/download_bcl2fastq/config.vsh.yaml -- \
+        bin/viash run src/bcl2fastq/download_bcl2fastq/config.vsh.yaml -- \
           --email "${{ secrets.ILLUMINA_EMAIL }}" \
           --password "${{ secrets.ILLUMINA_PASSWORD }}" \
           --output "bcl2fastq.zip" \
@@ -55,15 +57,15 @@ jobs:
         
     - name: Build image
       run: |
-        if [ ${{ github.event.inputs.push }} == 'true' ]; then
-          should_push=1
-        fi
-        should_push="${{ github.event.inputs.push }}"
         version="${{ github.event.inputs.version }}"
         tag=$base_name:$version
         if [[ "${{ github.event.inputs.version }}" == "latest" ]]; then
           tag="$tag,$base_name:latest"
-        viash run src/spaceranger/build_spaceranger/config.vsh.yaml -- \
+        bin/viash run src/spaceranger/build_spaceranger/config.vsh.yaml -- \
           --input_spaceranger "spaceranger.tar.gz" \
           --input_bcl2fastq "bcl2fastq.zip" \
-          --tag "$tag" ${should_push:+--push}
+          --tag "$tag" \
+          --push
+
+    - name: Image digest
+      run: echo ${{ steps.docker_build.outputs.digest }}

@@ -35,6 +35,10 @@ functionality:
       direction: output
       description: Output filename.
       default: "bcl-convert.rpm"
+    - name: "--tag"
+      type: string
+      description: Version of BCL Convert to download.
+      default: latest
   resources:
     - type: python_script
       path: script.py

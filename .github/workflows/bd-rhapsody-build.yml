@@ -10,10 +10,6 @@ on:
         description: Whether to mark the image as latest
         type: boolean
         required: true
-      push: 
-        description: Whether or not to push the image
-        type: boolean
-        required: true
 
 jobs:
   bd-rhapsody-build:
@@ -25,11 +21,21 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: viash-io/viash-actions/setup@v4
+    - name: Set up sbt
+      uses: olafurpg/setup-scala@v13
+
+    - name: Fetch viash
+      run: |
+        bin/init
+        bin/viash -h
+
+    - name: Install docker-squash
+      run: |
+        pip install --user docker-squash
 
     - name: Build dependending containers
       run: |
-        viash ns build -q 'bd_rhapsody'
+        bin/viash_build -q 'bd_rhapsody'
 
     - name: Login to Github Packages
       uses: docker/login-action@v2
@@ -40,14 +46,14 @@ jobs:
         
     - name: Build image
       run: |
-        if [ ${{ github.event.inputs.push }} == 'true' ]; then
-          should_push=1
-        fi
         version="${{ github.event.inputs.version }}"
         tag=$base_name:$version
         if [[ "${{ github.event.inputs.version }}" == "latest" ]]; then
           tag="$tag,$base_name:latest"
-        viash run src/bd_rhapsody/build_bd_rhapsody/config.vsh.yaml -- \
+        bin/viash run src/bd_rhapsody/build_bd_rhapsody/config.vsh.yaml -- \
           --from "bdgenomics/rhapsody:$version" \
           --tag "$tag" \
           --push
+
+    - name: Image digest
+      run: echo ${{ steps.docker_build.outputs.digest }}

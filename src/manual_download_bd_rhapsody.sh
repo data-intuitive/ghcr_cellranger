@@ -1,3 +1,6 @@
+#!/bin/bash
+set -eo pipefail
+
 for tag in 1.10.1 1.11.1 1.12.1 ; do
 
     echo "Building image for BD Rhapsody $tag"
