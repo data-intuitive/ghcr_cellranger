@@ -7,6 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.firefox import GeckoDriverManager
+from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
 import sys
 from pathlib import Path
 
@@ -15,15 +16,18 @@ debug = False
 par = {
   'timeout': 600,
   'output': 'bcl-convert.rpm',
-  'email': os.getenv("ILLUMINA_ACCOUNT"),
-  'password': os.getenv("ILLUMINA_PASS"),
+  'email': "robrecht.cannoodt+dummy@gmail.com",
+  'password': "a@@K?yaAY3J9F@@@",
   'multiplier': 1.0,
-  'tag': '4.0.5'
+  'tag': '4.1.5'
 }
 debug = True
 ## VIASH END
 
 url = "https://emea.support.illumina.com/sequencing/sequencing_software/bcl-convert/downloads.html"
+
+if par['gh_token']:
+    os.environ['GH_TOKEN'] = par['gh_token']
 
 def sleep(x):
     time.sleep(x * par['multiplier'])
@@ -108,21 +112,29 @@ with tempfile.TemporaryDirectory() as download_dir:
 
     print(f"filename: {filename}")
     print(f"dest_path: {dest_path}")
-    elem.click()
+    try:
+        elem.click()
+    except ElementClickInterceptedException:
+        webdriver.ActionChains(driver)\
+            .scroll_to_element(elem)\
+            .perform()
+        elem.click() 
     sleep(20)
 
-    # print("Fill in login form", flush=True)
-    # form = driver.find_element(By.NAME, 'signinForm')
-    # sleep(.1)
-    # form.find_element(By.ID, 'login').send_keys(par["email"])
-    # sleep(.1)
-    # form.find_element(By.NAME, 'password').send_keys(par["password"])
-    # sleep(.1)
-
-    # print("Downloading file", flush=True)
-    # form.submit()
+    print("Fill in login form", flush=True)
+    try:
+        form = driver.find_element(By.NAME, 'signinForm')
+        sleep(.1)
+        form.find_element(By.ID, 'login').send_keys(par["email"])
+        sleep(.1)
+        form.find_element(By.NAME, 'password').send_keys(par["password"])
+        sleep(.1)
+        print("Downloading file", flush=True)
+        form.submit()
+        sleep(10)
+    except NoSuchElementException:
+        pass
     
-    # sleep(10)
 
     print("Waiting until download is complete", flush=True)
     i = 0
