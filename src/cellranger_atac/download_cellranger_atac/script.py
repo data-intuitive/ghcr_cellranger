@@ -22,6 +22,9 @@ par = {
 debug = True
 ## VIASH END
 
+if par['gh_token']:
+    os.environ['GH_TOKEN'] = par['gh_token']
+
 url = f"https://support.10xgenomics.com/single-cell-atac/software/downloads/{par['tag']}"
 
 def sleep(x):

@@ -13,7 +13,7 @@ for tag in 2.0 1.0 ; do
 
     if [ ! -f "$tar_gz" ]; then
         echo "Downloading Cell Ranger Arc $tag"
-        viash run src/cellranger_arc/download_cellranger_arc/config.vsh.yaml -- --tag $tag --output "$tar_gz"
+        viash run src/cellranger_arc/download_cellranger_arc/config.vsh.yaml -- --tag $tag --output "$tar_gz" --gh_token "$GH_TOKEN"
     fi
 
     echo "Building image for Cell Ranger Arc $tag"

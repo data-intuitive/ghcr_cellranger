@@ -6,6 +6,9 @@ import tempfile
 import shutil
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select, WebDriverWait
+from selenium.webdriver.support import expected_conditions
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.firefox import GeckoDriverManager
 import sys
@@ -14,7 +17,7 @@ from pathlib import Path
 debug = False
 ## VIASH START
 par = {
-  'tag': 'latest',
+  'tag': '7.2',
   'timeout': 600,
   'output': 'cellranger.tar.gz',
   'multiplier': 1.0
@@ -22,7 +25,18 @@ par = {
 debug = True
 ## VIASH END
 
-url = f"https://support.10xgenomics.com/single-cell-gene-expression/software/downloads/{par['tag']}"
+if par['gh_token']:
+    os.environ['GH_TOKEN'] = par['gh_token']
+
+major, _, minor_and_other = par['tag'].partition('.')
+minor = ""
+if major != "latest":
+    minor, _, _ = minor_and_other.partition('.')
+    major_str=f" {major}."
+else:
+    major_str=""
+
+url = "https://www.10xgenomics.com/support/software/cell-ranger/downloads/previous-versions"
 
 def sleep(x):
     time.sleep(x * par['multiplier'])
@@ -42,7 +56,8 @@ def is_download_finished(temp_folder):
 with tempfile.TemporaryDirectory() as download_dir:
     print("Opening Firefox", flush=True)
     options = webdriver.firefox.options.Options()
-    options.headless = not debug
+    if not debug:
+        options.add_argument("-headless") 
     options.set_preference("browser.download.folderList", 2)
     options.set_preference("browser.download.manager.showWhenStarting", False)
     options.set_preference("browser.download.dir", download_dir)
@@ -57,37 +72,48 @@ with tempfile.TemporaryDirectory() as download_dir:
         return "".join([random.choice('qwertzuiopasdfghjklyxcvbnm') for _ in range(random.randrange(5, 10))])
 
     sleep(5)
-
     print("Navigating to form", flush=True)
     driver.get(url)
-
-    sleep(5)
-
+    delay = 25
+    try:
+        WebDriverWait(driver, 25).until(expected_conditions.presence_of_element_located((By.ID, 'FirstName'))) 
+    except TimeoutException as e:
+        raise e
     # Fill out form
-    form = driver.find_element(By.ID, 'eula-form')
+    driver.find_element(By.ID, 'FirstName').send_keys(random_keys())
     sleep(.1)
-    form.find_element(By.ID, 'first_name').send_keys(random_keys())
+    driver.find_element(By.ID, 'LastName').send_keys(random_keys())
     sleep(.1)
-    form.find_element(By.ID, 'last_name').send_keys(random_keys())
+    driver.find_element(By.ID, 'Email').send_keys(random_keys() + '@gmail.com')
     sleep(.1)
-    form.find_element(By.ID, 'email').send_keys(random_keys() + '@gmail.com')
+    driver.find_element(By.ID, 'Company').send_keys(random_keys())
+    select = Select(driver.find_element(By.ID, 'Country'))
+    select.select_by_index(1)
     sleep(.1)
-    form.find_element(By.ID, 'company').send_keys(random_keys())
-    sleep(.1)
-    agree = form.find_element(By.ID, "agree")
-    if not agree.is_selected():
-        agree.click()
+    try:
+        driver.find_element(By.ID, 'PostalCode').send_keys(random_keys())
+    except NoSuchElementException:
+        pass
 
-    assert agree.is_selected()
-
+    select = Select(driver.find_element(By.ID, 'tempIndustry'))
+    select.select_by_index(1)
+    sleep(.1)
+    select = Select(driver.find_element(By.ID, 'Primary_Area_of_Research__c'))
+    select.select_by_index(1)
+    sleep(.1)
+    checkbox = driver.find_element(By.ID, "collectionConsent").find_element(By.XPATH, "preceding-sibling::*")
+    assert "Box" in checkbox.get_attribute("Class")
+    checkbox.click()
+    assert driver.find_element(By.ID, "collectionConsent").get_attribute("checked") == "true"
+    
     # Go to download page
     print("Navigating to download page", flush=True)
-    form.submit()
-    sleep(5)
+    driver.find_element(By.TAG_NAME, "form").submit()
+    sleep(8)
 
     # Download cellranger
     print("Downloading Cell Ranger", flush=True)
-    elem = driver.find_element(By.PARTIAL_LINK_TEXT, "Download - Linux")
+    elem = driver.find_element(By.XPATH, f"//*[contains(., 'Cell Ranger{major_str}{minor}')]/following-sibling::div//*[text()[contains(.,'Download for Linux 64-bit (tar.gz)')]]/parent::a")
     elem.click()
     url = elem.get_property("href")
     filename = re.sub("^.*/([^?/]*)?[^/]*$", "\\1", url)

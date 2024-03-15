@@ -33,6 +33,10 @@ functionality:
       direction: output
       description: Output filename.
       default: "bcl2fastq.zip"
+    - name: "--gh_token"
+      type: string
+      required: false
+      description: "Token to authenticate to github with basis read permissions."
   resources:
     - type: python_script
       path: script.py
