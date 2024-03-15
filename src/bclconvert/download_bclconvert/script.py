@@ -16,10 +16,10 @@ debug = False
 par = {
   'timeout': 600,
   'output': 'bcl-convert.rpm',
-  'email': "***REMOVED***",
-  'password': "***REMOVED***",
+  'email': os.getenv("ILLUMINA_ACCOUNT"),
+  'password': os.getenv("ILLUMINA_PASS"),
   'multiplier': 1.0,
-  'tag': '4.1.5'
+  'tag': '4.0.5'
 }
 debug = True
 ## VIASH END
