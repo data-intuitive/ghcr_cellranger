@@ -4,7 +4,7 @@ set -eo pipefail
 
 if [ -z ${ILLUMINA_ACCOUNT+x} ] || [ -z ${ILLUMINA_PASS+x} ]; then echo "ILLUMINA_PASS or ILLUMINA_ACCOUNT is unset" && exit 1; fi
 
-for tag in 3.10.12 4.0.5 4.1.5 4.1.7 4.1.23 4.2.4 4.2.7; do
+for tag in 3.10.12 4.0.5 4.1.23 4.2.7; do
     shortversion=${tag%.*}
     bclconvert_rpm="$HOME/.cache/ghcr_cellranger/bclconvert/bclconvert_$tag.rpm"
 
