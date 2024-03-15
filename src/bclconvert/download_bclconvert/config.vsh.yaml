@@ -39,6 +39,10 @@ functionality:
       type: string
       description: Version of BCL Convert to download.
       default: latest
+    - name: "--gh_token"
+      type: string
+      required: false
+      description: "Token to authenticate to github with basis read permissions."
   resources:
     - type: python_script
       path: script.py

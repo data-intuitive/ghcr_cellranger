@@ -24,6 +24,9 @@ debug = True
 
 url = f"https://support.10xgenomics.com/single-cell-multiome-atac-gex/software/downloads/{par['tag']}"
 
+if par['gh_token']:
+    os.environ['GH_TOKEN'] = par['gh_token']
+
 def sleep(x):
     time.sleep(x * par['multiplier'])
 

@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM python:3.11-slim-bookworm
 
 LABEL authors="Robrecht Cannoodt <robrecht@data-intuitive.com>" \
     org.opencontainers.image.description="Docker image containing Cell Ranger" \
@@ -11,12 +11,8 @@ COPY bcl2fastq.rpm /opt
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y alien && \
   rm -rf /var/lib/apt/lists/* && \
-  alien -i /opt/bcl2fastq.rpm
-
-# install python3
-RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y python3 python3-pip python-is-python3 && \
-  rm -rf /var/lib/apt/lists/*
+  alien -i /opt/bcl2fastq.rpm && \
+  rm /opt/bcl2fastq.rpm
 
 # install cellranger
 ADD cellranger.tar.gz /opt

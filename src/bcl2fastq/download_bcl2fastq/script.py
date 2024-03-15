@@ -7,6 +7,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.firefox import GeckoDriverManager
+from selenium.common.exceptions import NoSuchElementException
+
 import sys
 from pathlib import Path
 
@@ -23,6 +25,9 @@ debug = True
 ## VIASH END
 
 url = "https://emea.support.illumina.com/downloads/bcl2fastq-conversion-software-v2-20.html"
+
+if par['gh_token']:
+    os.environ['GH_TOKEN'] = par['gh_token']
 
 def sleep(x):
     time.sleep(x * par['multiplier'])
@@ -57,11 +62,15 @@ with tempfile.TemporaryDirectory() as download_dir:
     print("Navigating to page", flush=True)
     driver.get(url)
     sleep(5)
+    
+    try:
+        print("Clicking trust policy", flush=True)
+        elem = driver.find_element(By.ID, "onetrust-accept-btn-handler")
+        elem.click()
+        sleep(5)
+    except NoSuchElementException:
+        pass
 
-    # print("Clicking trust policy", flush=True)
-    # elem = driver.find_element(By.ID, "onetrust-accept-btn-handler")
-    # elem.click()
-    # sleep(5)
 
     print("Clicking url", flush=True)
     elem = driver.find_element(By.PARTIAL_LINK_TEXT, "(Linux rpm)")
@@ -72,16 +81,18 @@ with tempfile.TemporaryDirectory() as download_dir:
     sleep(20)
 
     print("Fill in login form", flush=True)
-    form = driver.find_element(By.CLASS_NAME, 'a-sign-in-form')
-    sleep(.1)
-    form.find_element(By.ID, 'login').send_keys(par["email"])
-    sleep(.1)
-    form.find_element(By.NAME, 'password').send_keys(par["password"])
-    sleep(.1)
-    button = form.find_element(By.CSS_SELECTOR, '[value="Sign In"]')
-
-    print("Downloading file", flush=True)
-    button.click()
+    try:
+        form = driver.find_element(By.NAME, 'signinForm')
+        sleep(.1)
+        form.find_element(By.ID, 'login').send_keys(par["email"])
+        sleep(.1)
+        form.find_element(By.NAME, 'password').send_keys(par["password"])
+        sleep(.1)
+        print("Downloading file", flush=True)
+        form.submit()
+        sleep(10)
+    except NoSuchElementException:
+        pass
     sleep(20)
 
     print("Waiting until download is complete", flush=True)
