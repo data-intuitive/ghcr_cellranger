@@ -1,50 +1,60 @@
-functionality:
-  name: download_bclconvert
-  namespace: bclconvert
-  version: "dev"
-  description: "A helper script to download bclconvert."
-  authors:
-    - name: Robrecht Cannoodt
-      email: rcannood@gmail.com
-      roles: [ author ]
-      props: { github: rcannood, orcid: "0000-0003-3641-729X" }
-    - name: Toni Verbeiren
-      roles: [ author ]
-  arguments:
-    - name: "--email"
-      type: string
-      description: Illumina account
-      required: true
-      example: foo@bar.com
-    - name: "--password"
-      type: string
-      description: Password for Illumina account
-      required: true
-      example: mysecurepassword
-    - name: "--timeout"
-      type: integer
-      description: Timeout in seconds.
-      default: 600
-    - name: "--multiplier"
-      type: double
-      description: Wait multiplier.
-      default: 1
-    - name: "--output"
-      alternatives: ["-o"]
-      type: file
-      direction: output
-      description: Output filename.
-      default: "bcl-convert.rpm"
-    - name: "--tag"
-      type: string
-      description: Version of BCL Convert to download.
-      default: latest
-    - name: "--gh_token"
-      type: string
-      required: false
-      description: "Token to authenticate to github with basis read permissions."
-  resources:
-    - type: python_script
-      path: script.py
-platforms:
-  - __merge__: ["/src/base/base_download_docker_platform.yaml"]
+name: download_bclconvert
+namespace: bclconvert
+version: "dev"
+description: "A helper script to download bclconvert."
+authors:
+  - name: Robrecht Cannoodt
+    roles: [ author ]
+    info:
+      links:
+        email: robrecht@data-intuitive.com
+        github: rcannood
+        orcid: "0000-0003-3641-729X"
+        linkedin: robrechtcannoodt
+      organizations:
+        - name: Data Intuitive
+          href: https://www.data-intuitive.com
+          role: Data Science Engineer
+        - name: Open Problems
+          href: https://openproblems.bio
+          role: Core Member
+  - name: Toni Verbeiren
+    roles: [ author ]
+arguments:
+  - name: "--email"
+    type: string
+    description: Illumina account
+    required: true
+    example: foo@bar.com
+  - name: "--password"
+    type: string
+    description: Password for Illumina account
+    required: true
+    example: mysecurepassword
+  - name: "--timeout"
+    type: integer
+    description: Timeout in seconds.
+    default: 600
+  - name: "--multiplier"
+    type: double
+    description: Wait multiplier.
+    default: 1
+  - name: "--output"
+    alternatives: ["-o"]
+    type: file
+    direction: output
+    description: Output filename.
+    default: "bcl-convert.rpm"
+  - name: "--tag"
+    type: string
+    description: Version of BCL Convert to download.
+    default: latest
+  - name: "--gh_token"
+    type: string
+    required: false
+    description: "Token to authenticate to github with basis read permissions."
+resources:
+  - type: python_script
+    path: script.py
+engines:
+- __merge__: ["/src/base/base_download_docker_platform.yaml"]

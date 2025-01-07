@@ -112,8 +112,8 @@ with tempfile.TemporaryDirectory() as download_dir:
     driver.find_element(By.TAG_NAME, "form").submit()
     sleep(8)
 
-    # Download cellranger
-    print("Downloading Cell Ranger", flush=True)
+    # Download spaceranger
+    print("Downloading SpaceRanger", flush=True)
     elem = driver.find_element(By.XPATH, f"//*[contains(., 'Space Ranger{major_str}{minor}')]/following-sibling::div//*[text()[contains(.,'Download for Linux 64-bit (tar.gz)')]]/parent::a")
     elem.click()
     url = elem.get_property("href")

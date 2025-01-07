@@ -1,33 +1,43 @@
-functionality:
-  name: build_cellranger_atac
-  namespace: cellranger_atac
-  description: "A helper script to download Cell Ranger ATAC."
-  authors:
-    - name: Dries Schaumont
-      email: dries@data-intuitive.com
-      roles: [ author ]
-      props: { github: DriesSchaumont, orcid: "0000-0002-4389-0440" }
-  arguments:
-    - name: "--input_cellranger_atac"
-      type: file
-      description: Tar.gz file containing Cell Ranger ATAC.
-      default: "cellranger_atac.tar.gz"
-    - name: "--input_bcl2fastq"
-      type: file
-      description: Zip file containing bcl2fastq rpm.
-      default: "bcl2fastq.zip"
-    - name: "--tag"
-      type: string
-      description: Name of the resulting Docker image.
-      default: ghcr.io/data-intuitive/cellranger_atac:latest
-      multiple: true
-      multiple_sep: ','
-    - name: "--push"
-      type: boolean_true
-      description: Whether or not to try to push the image to the corresponding registry.
-  resources:
-    - type: bash_script
-      path: script.sh
-    - path: Dockerfile
-platforms:
-  - type: native
+name: build_cellranger_atac
+namespace: cellranger_atac
+description: "A helper script to download Cell Ranger ATAC."
+authors:
+  - name: Robrecht Cannoodt
+    roles: [ author ]
+    info:
+      links:
+        email: robrecht@data-intuitive.com
+        github: rcannood
+        orcid: "0000-0003-3641-729X"
+        linkedin: robrechtcannoodt
+      organizations:
+        - name: Data Intuitive
+          href: https://www.data-intuitive.com
+          role: Data Science Engineer
+        - name: Open Problems
+          href: https://openproblems.bio
+          role: Core Member
+arguments:
+  - name: "--input_cellranger_atac"
+    type: file
+    description: Tar.gz file containing Cell Ranger ATAC.
+    default: "cellranger_atac.tar.gz"
+  - name: "--input_bcl2fastq"
+    type: file
+    description: Zip file containing bcl2fastq rpm.
+    default: "bcl2fastq.zip"
+  - name: "--tag"
+    type: string
+    description: Name of the resulting Docker image.
+    default: ghcr.io/data-intuitive/cellranger_atac:latest
+    multiple: true
+    multiple_sep: ','
+  - name: "--push"
+    type: boolean_true
+    description: Whether or not to try to push the image to the corresponding registry.
+resources:
+  - type: bash_script
+    path: script.sh
+  - path: Dockerfile
+engines:
+- type: native

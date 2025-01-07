@@ -1,33 +1,43 @@
-functionality:
-  name: build_spaceranger
-  namespace: spaceranger
-  description: "A helper script to download Space Ranger."
-  authors:
-    - name: Robrecht Cannoodt
-      email: rcannood@gmail.com
-      roles: [ author ]
-      props: { github: rcannood, orcid: "0000-0003-3641-729X" }
-  arguments:
-    - name: "--input_spaceranger"
-      type: file
-      description: Tar.gz file containing Space Ranger.
-      default: "spaceranger.tar.gz"
-    - name: "--input_bcl2fastq"
-      type: file
-      description: Zip file containing bcl2fastq rpm.
-      default: "bcl2fastq.zip"
-    - name: "--tag"
-      type: string
-      description: Name of the resulting Docker image.
-      default: ghcr.io/data-intuitive/spaceranger:latest
-      multiple: true
-      multiple_sep: ','
-    - name: "--push"
-      type: boolean_true
-      description: Whether or not to try to push the image to the corresponding registry.
-  resources:
-    - type: bash_script
-      path: script.sh
-    - path: Dockerfile
-platforms:
-  - type: native
+name: build_spaceranger
+namespace: spaceranger
+description: "A helper script to download Space Ranger."
+authors:
+  - name: Robrecht Cannoodt
+    info:
+      links:
+        email: robrecht@data-intuitive.com
+        github: rcannood
+        orcid: "0000-0003-3641-729X"
+        linkedin: robrechtcannoodt
+      organizations:
+        - name: Data Intuitive
+          href: https://www.data-intuitive.com
+          role: Data Science Engineer
+        - name: Open Problems
+          href: https://openproblems.bio
+          role: Core Member
+
+arguments:
+  - name: "--input_spaceranger"
+    type: file
+    description: Tar.gz file containing Space Ranger.
+    default: "spaceranger.tar.gz"
+  - name: "--input_bcl2fastq"
+    type: file
+    description: Zip file containing bcl2fastq rpm.
+    default: "bcl2fastq.zip"
+  - name: "--tag"
+    type: string
+    description: Name of the resulting Docker image.
+    default: ghcr.io/data-intuitive/spaceranger:latest
+    multiple: true
+    multiple_sep: ','
+  - name: "--push"
+    type: boolean_true
+    description: Whether or not to try to push the image to the corresponding registry.
+resources:
+  - type: bash_script
+    path: script.sh
+  - path: Dockerfile
+engines:
+- type: native

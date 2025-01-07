@@ -1,36 +1,46 @@
-functionality:
-  name: build_cellranger
-  namespace: cellranger
-  description: "A helper script to download Cell Ranger."
-  authors:
-    - name: Robrecht Cannoodt
-      email: rcannood@gmail.com
-      roles: [ author ]
-      props: { github: rcannood, orcid: "0000-0003-3641-729X" }
-  arguments:
-    - name: "--input_cellranger"
-      type: file
-      description: Tar.gz file containing Cell Ranger.
-      default: "cellranger.tar.gz"
-    - name: "--input_bcl2fastq"
-      type: file
-      description: Zip file containing bcl2fastq rpm.
-      default: "bcl2fastq.zip"
-    - name: "--tag"
-      type: string
-      description: Name of the resulting Docker image.
-      default: ghcr.io/data-intuitive/cellranger:latest
-      multiple: true
-      multiple_sep: ','
-    - name: "--push"
-      type: boolean_true
-      description: Whether or not to try to push the image to the corresponding registry.
-    - name: "--pushifnotpresent"
-      type: boolean_true
-      description: Push the container to the registry if it does not exist yet.
-  resources:
-    - type: bash_script
-      path: script.sh
-    - path: Dockerfile
-platforms:
-  - type: native
+name: build_cellranger
+namespace: cellranger
+description: "A helper script to download Cell Ranger."
+authors:
+  - name: Robrecht Cannoodt
+    roles: [ author ]
+    info:
+      links:
+        email: robrecht@data-intuitive.com
+        github: rcannood
+        orcid: "0000-0003-3641-729X"
+        linkedin: robrechtcannoodt
+      organizations:
+        - name: Data Intuitive
+          href: https://www.data-intuitive.com
+          role: Data Science Engineer
+        - name: Open Problems
+          href: https://openproblems.bio
+          role: Core Member
+arguments:
+  - name: "--input_cellranger"
+    type: file
+    description: Tar.gz file containing Cell Ranger.
+    default: "cellranger.tar.gz"
+  - name: "--input_bcl2fastq"
+    type: file
+    description: Zip file containing bcl2fastq rpm.
+    default: "bcl2fastq.zip"
+  - name: "--tag"
+    type: string
+    description: Name of the resulting Docker image.
+    default: ghcr.io/data-intuitive/cellranger:latest
+    multiple: true
+    multiple_sep: ','
+  - name: "--push"
+    type: boolean_true
+    description: Whether or not to try to push the image to the corresponding registry.
+  - name: "--pushifnotpresent"
+    type: boolean_true
+    description: Push the container to the registry if it does not exist yet.
+resources:
+  - type: bash_script
+    path: script.sh
+  - path: Dockerfile
+engines:
+- type: native

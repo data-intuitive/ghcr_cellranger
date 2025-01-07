@@ -1,29 +1,39 @@
-functionality:
-  name: build_bcl2fastq
-  namespace: bcl2fastq
-  description: "A helper script to create a container with bcl2fastq."
-  authors:
-    - name: Robrecht Cannoodt
-      email: rcannood@gmail.com
-      roles: [ author ]
-      props: { github: rcannood, orcid: "0000-0003-3641-729X" }
-  arguments:
-    - name: "--input"
-      type: file
-      description: Zip file containing RPM package.
-      default: "bcl2fastq.zip"
-    - name: "--tag"
-      type: string
-      description: Name of the resulting Docker image.
-      default: ghcr.io/data-intuitive/bcl2fastq:latest
-      multiple: true
-      multiple_sep: ','
-    - name: "--push"
-      type: boolean_true
-      description: Whether or not to try to push the image to the corresponding registry.
-  resources:
-    - type: bash_script
-      path: script.sh
-    - path: Dockerfile
-platforms:
-  - type: native
+name: build_bcl2fastq
+namespace: bcl2fastq
+description: "A helper script to create a container with bcl2fastq."
+authors:
+  - name: Robrecht Cannoodt
+    roles: [ author ]
+    info:
+      links:
+        email: robrecht@data-intuitive.com
+        github: rcannood
+        orcid: "0000-0003-3641-729X"
+        linkedin: robrechtcannoodt
+      organizations:
+        - name: Data Intuitive
+          href: https://www.data-intuitive.com
+          role: Data Science Engineer
+        - name: Open Problems
+          href: https://openproblems.bio
+          role: Core Member
+arguments:
+  - name: "--input"
+    type: file
+    description: Zip file containing RPM package.
+    default: "bcl2fastq.zip"
+  - name: "--tag"
+    type: string
+    description: Name of the resulting Docker image.
+    default: ghcr.io/data-intuitive/bcl2fastq:latest
+    multiple: true
+    multiple_sep: ','
+  - name: "--push"
+    type: boolean_true
+    description: Whether or not to try to push the image to the corresponding registry.
+resources:
+  - type: bash_script
+    path: script.sh
+  - path: Dockerfile
+engines:
+- type: native
