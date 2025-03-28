@@ -1,38 +1,48 @@
-functionality:
-  name: download_cellranger_arc
-  namespace: cellranger_arc
-  version: "dev"
-  description: "A helper script to download Cell Ranger ARC."
-  authors:
-    - name: Robrecht Cannoodt
-      email: rcannood@gmail.com
-      roles: [ author ]
-      props: { github: rcannood, orcid: "0000-0003-3641-729X" }
-  arguments:
-    - name: "--tag"
-      type: string
-      description: Version of Cell Ranger ARC to use.
-      default: latest
-    - name: "--timeout"
-      type: integer
-      description: Timeout in seconds.
-      default: 600
-    - name: "--multiplier"
-      type: double
-      description: Wait multiplier.
-      default: 1
-    - name: "--output"
-      alternatives: ["-o"]
-      type: file
-      direction: output
-      description: Output filename.
-      default: "cellranger_arc_${VIASH_PAR_TAG}.tar.gz"
-    - name: "--gh_token"
-      type: string
-      required: false
-      description: "Token to authenticate to github with basis read permissions."
-  resources:
-    - type: python_script
-      path: script.py
-platforms:
-  - __merge__: ["/src/base/base_download_docker_platform.yaml"]
+name: download_cellranger_arc
+namespace: cellranger_arc
+version: "dev"
+description: "A helper script to download Cell Ranger ARC."
+authors:
+  - name: Robrecht Cannoodt
+    roles: [ author ]
+    info:
+      links:
+        email: robrecht@data-intuitive.com
+        github: rcannood
+        orcid: "0000-0003-3641-729X"
+        linkedin: robrechtcannoodt
+      organizations:
+        - name: Data Intuitive
+          href: https://www.data-intuitive.com
+          role: Data Science Engineer
+        - name: Open Problems
+          href: https://openproblems.bio
+          role: Core Member
+arguments:
+  - name: "--tag"
+    type: string
+    description: Version of Cell Ranger ARC to use.
+    default: latest
+  - name: "--timeout"
+    type: integer
+    description: Timeout in seconds.
+    default: 600
+  - name: "--multiplier"
+    type: double
+    description: Wait multiplier.
+    default: 1
+  - name: "--output"
+    alternatives: ["-o"]
+    type: file
+    direction: output
+    description: Output filename.
+    default: "cellranger_arc_${VIASH_PAR_TAG}.tar.gz"
+  - name: "--gh_token"
+    type: string
+    required: false
+    description: "Token to authenticate to github with basis read permissions."
+resources:
+  - type: python_script
+    path: script.py
+engines:
+- __merge__: ["/src/base/base_download_docker_platform.yaml"]

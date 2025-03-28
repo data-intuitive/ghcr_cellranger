@@ -1,29 +1,39 @@
-functionality:
-  name: build_bd_rhapsody
-  namespace: bd_rhapsody
-  description: "A helper script to update the BD Rhapsody image."
-  authors:
-    - name: Robrecht Cannoodt
-      email: rcannood@gmail.com
-      roles: [ author ]
-      props: { github: rcannood, orcid: "0000-0003-3641-729X" }
-  arguments:
-    - name: "--from"
-      type: string
-      description: Base image
-      default: bdgenomics/rhapsody:1.10.1
-    - name: "--tag"
-      type: string
-      description: Name of the resulting Docker image.
-      default: ghcr.io/data-intuitive/bd_rhapsody:latest
-      multiple: true
-      multiple_sep: ','
-    - name: "--push"
-      type: boolean_true
-      description: Whether or not to try to push the image to the corresponding registry.
-  resources:
-    - type: bash_script
-      path: script.sh
-    - path: Dockerfile.part
-platforms:
-  - type: native
+name: build_bd_rhapsody
+namespace: bd_rhapsody
+description: "A helper script to update the BD Rhapsody image."
+authors:
+  - name: Robrecht Cannoodt
+    roles: [ author ]
+    info:
+      links:
+        email: robrecht@data-intuitive.com
+        github: rcannood
+        orcid: "0000-0003-3641-729X"
+        linkedin: robrechtcannoodt
+      organizations:
+        - name: Data Intuitive
+          href: https://www.data-intuitive.com
+          role: Data Science Engineer
+        - name: Open Problems
+          href: https://openproblems.bio
+          role: Core Member
+arguments:
+  - name: "--from"
+    type: string
+    description: Base image
+    default: bdgenomics/rhapsody:1.10.1
+  - name: "--tag"
+    type: string
+    description: Name of the resulting Docker image.
+    default: ghcr.io/data-intuitive/bd_rhapsody:latest
+    multiple: true
+    multiple_sep: ','
+  - name: "--push"
+    type: boolean_true
+    description: Whether or not to try to push the image to the corresponding registry.
+resources:
+  - type: bash_script
+    path: script.sh
+  - path: Dockerfile.part
+engines:
+- type: native
