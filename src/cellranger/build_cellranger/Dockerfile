@@ -16,5 +16,10 @@ RUN apt-get update && \
 
 # install cellranger
 ADD cellranger.tar.gz /opt
-RUN ln -s $(dirname $(find /opt -name "cellranger" | grep -i bin)) /opt/cellranger
+RUN ln -s $(dirname $(find /opt -name "cellranger" | grep -i bin)) /opt/cellranger && \
+ # disable telemetry
+  mkdir -p /etc/tenx/telemetry/ && \
+  touch /etc/tenx/telemetry/disable_upload && \
+  touch /etc/tenx/telemetry/disable_update
+
 ENV PATH="${PATH}:/opt/cellranger"

@@ -8,7 +8,7 @@ RUN apt-get --allow-releaseinfo-change update && \
   apt upgrade -y
 
 # update picard
-RUN conda install -y -c bioconda picard=2.27.5
+RUN conda update --no-channel-priority -y -c bioconda picard
 
 # install procps and nodejs
 RUN apt-get update && \
